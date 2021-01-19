@@ -20,17 +20,25 @@ namespace TGPro.Data.EF
             modelBuilder.ApplyConfiguration(new VendorConfiguration());
             modelBuilder.ApplyConfiguration(new AppRoleConfiguration());
             modelBuilder.ApplyConfiguration(new AppUserConfiguration());
+            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new ConditionConfiguration());
+            modelBuilder.ApplyConfiguration(new DemandConfiguration());
+            modelBuilder.ApplyConfiguration(new TrademarkConfiguration());
 
             modelBuilder.Entity<IdentityUserClaim<Guid>>().ToTable("AppUserClaims");
             modelBuilder.Entity<IdentityUserRole<Guid>>().ToTable("AppUserRoles").HasKey(x => new { x.UserId, x.RoleId });
             modelBuilder.Entity<IdentityUserLogin<Guid>>().ToTable("AppUserLogins").HasKey(x => x.UserId);
             modelBuilder.Entity<IdentityRoleClaim<Guid>>().ToTable("AppRoleClaims");
             modelBuilder.Entity<IdentityUserToken<Guid>>().ToTable("AppUserTokens").HasKey(x => x.UserId);
-            
+
             //Data Seeding
             modelBuilder.Seed();
         }
 
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Condition> Conditions { get; set; }
+        public DbSet<Demand> Demands { get; set; }
+        public DbSet<Trademark> Trademarks { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using TGPro.Data.Enums;
+﻿using System.Collections.Generic;
+using TGPro.Data.Enums;
 
 namespace TGPro.Data.Entities
 {

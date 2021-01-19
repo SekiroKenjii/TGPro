@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGPro.WebApp", "TGPro.WebApp\TGPro.WebApp.csproj", "{FE90CAF1-0BEF-40B9-B16F-7E66C65F7F0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGPro.Data", "TGPro.Data\TGPro.Data.csproj", "{7FED0A3E-81F3-4E4F-B477-6EEA62147473}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE90CAF1-0BEF-40B9-B16F-7E66C65F7F0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE90CAF1-0BEF-40B9-B16F-7E66C65F7F0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE90CAF1-0BEF-40B9-B16F-7E66C65F7F0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE90CAF1-0BEF-40B9-B16F-7E66C65F7F0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FED0A3E-81F3-4E4F-B477-6EEA62147473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FED0A3E-81F3-4E4F-B477-6EEA62147473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FED0A3E-81F3-4E4F-B477-6EEA62147473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FED0A3E-81F3-4E4F-B477-6EEA62147473}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6AAA0694-1B73-4876-9E35-00067E1DC1B5}
+	EndGlobalSection
+EndGlobal

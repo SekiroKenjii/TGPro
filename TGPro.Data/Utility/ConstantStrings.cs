@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TGPro.Data.Utility
 {
-    public class SD
+    public class ConstantStrings
     {
         public const string DbConnectionString = "TGProDb";
     }

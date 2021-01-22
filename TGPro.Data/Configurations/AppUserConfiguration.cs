@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TGPro.Data.Entities;
+using TGPro.Data.Enums;
 
 namespace TGPro.Data.Configurations
 {
@@ -16,6 +17,7 @@ namespace TGPro.Data.Configurations
             builder.Property(x => x.City).HasMaxLength(100);
             builder.Property(x => x.Country).HasMaxLength(20);
             builder.Property(x => x.ProfilePicture).IsRequired(false);
+            builder.Property(x => x.Sex).HasDefaultValue(Sex.Null);
         }
     }
 }

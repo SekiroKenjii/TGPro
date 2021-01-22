@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using TGPro.Data.Enums;
 
 namespace TGPro.Data.Entities
 {
@@ -13,5 +13,6 @@ namespace TGPro.Data.Entities
         public string City { get; set; }
         public string Country { get; set; }
         public string ProfilePicture { get; set; }
+        public Sex Sex { get; set; }
     }
 }

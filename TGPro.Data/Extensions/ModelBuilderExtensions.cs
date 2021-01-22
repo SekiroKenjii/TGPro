@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using TGPro.Data.Entities;
 
 namespace TGPro.Data.Extensions
@@ -36,6 +34,7 @@ namespace TGPro.Data.Extensions
                 PhoneNumberConfirmed = true,
                 FirstName = "Võ Trung",
                 LastName = "Thường",
+                Sex = Enums.Sex.Male,
                 Address = "KTX Khu B, Đại Học Quốc Gia TPHCM",
                 City = "Thành phố Hồ Chí Minh",
                 Country = "Việt Nam"

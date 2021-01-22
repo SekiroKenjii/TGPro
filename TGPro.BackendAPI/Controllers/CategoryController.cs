@@ -21,18 +21,26 @@ namespace TGPro.BackendAPI.Controllers
         [HttpGet("/category_by_id/{categoryId}")]
         public async Task<IActionResult> GetById(int categoryId)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var category = await _categoryService.GetById(categoryId);
             if (category == null)
-                return BadRequest($"Cannot find any categories with id: {categoryId}");
+                return BadRequest();
             return Ok(category);
         }
 
         [HttpGet("/categories")]
         public async Task<IActionResult> GetListCategory()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var category = await _categoryService.GetListCategory();
             if (category.Count == 0)
-                return BadRequest("Cannot find any categories");
+                return BadRequest();
             return Ok(category);
         }
 

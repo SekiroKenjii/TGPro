@@ -58,7 +58,7 @@ namespace TGPro.Service.Catalog.Categories
         public async Task<List<Category>> GetListCategory()
         {
             List<Category> lstCategory = await _db.Categories.OrderBy(c => c.Name).ToListAsync();
-            if (lstCategory == null) throw new TGProException("Cannot find any categories");
+            if (lstCategory.Count == 0) throw new TGProException("Cannot find any categories");
             else
             {
                 return lstCategory;

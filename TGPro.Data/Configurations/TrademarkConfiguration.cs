@@ -17,7 +17,8 @@ namespace TGPro.Data.Configurations
             builder.Property(x => x.Name).IsRequired();
             builder.Property(x => x.Image).IsRequired();
             builder.Property(x => x.Description).IsRequired(false);
-            builder.Property(x => x.Status).IsRequired().HasDefaultValue(Status.InActive);
+            builder.Property(x => x.Status).IsRequired(true).HasDefaultValue(Status.InActive);
+            builder.Property(x => x.PublicId).IsRequired(true);
         }
     }
 }

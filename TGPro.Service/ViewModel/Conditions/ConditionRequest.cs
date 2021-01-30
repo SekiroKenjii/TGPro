@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TGPro.Service.ViewModel.Conditions
+﻿namespace TGPro.Service.ViewModel.Conditions
 {
     public class ConditionRequest
     {

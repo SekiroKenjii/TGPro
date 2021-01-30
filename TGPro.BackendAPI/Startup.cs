@@ -8,7 +8,11 @@ using Microsoft.OpenApi.Models;
 using TGPro.Data.EF;
 using TGPro.Data.Utility;
 using TGPro.Service.Catalog.Categories;
+using TGPro.Service.Catalog.Conditions;
+using TGPro.Service.Catalog.Demands;
+using TGPro.Service.Catalog.Trademarks;
 using TGPro.Service.Common;
+using TGPro.Service.Utility;
 
 namespace TGPro.BackendAPI
 {
@@ -30,11 +34,16 @@ namespace TGPro.BackendAPI
             });
 
             services.AddDbContext<TGProDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(ConstantStrings.DbConnectionString)));
+                options.UseSqlServer(Configuration.GetConnectionString(Data.Utility.ConstantStrings.DbConnectionString)));
 
             //declare DI
             services.AddTransient<IStorageService, FileStorageService>();
             services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IConditionService, ConditionService>();
+            services.AddTransient<IDemandService, DemandService>();
+            services.AddTransient<ITrademarkService, TrademarkService>();
+
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
 
             services.AddControllers();
 

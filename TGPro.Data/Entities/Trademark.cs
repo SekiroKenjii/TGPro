@@ -10,5 +10,6 @@ namespace TGPro.Data.Entities
         public string Image { get; set; }
         public string Description { get; set; }
         public Status Status { get; set; }
+        public string PublicId { get; set; }
     }
 }

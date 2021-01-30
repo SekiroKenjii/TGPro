@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TGPro.Service.ViewModel.Categories
+﻿namespace TGPro.Service.ViewModel.Categories
 {
     public class CategoryRequest
     {

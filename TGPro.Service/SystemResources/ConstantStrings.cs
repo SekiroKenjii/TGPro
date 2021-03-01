@@ -1,7 +1,18 @@
-﻿namespace TGPro.Service.Utility
+﻿namespace TGPro.Service.SystemResources
 {
     public class ConstantStrings
     {
+        public const string DbConnectionString = "TGProDb";
+        public const string CloudinarySetting = "CloudinarySettings";
+
+        public const string SwaggerUrl = "/swagger/v1/swagger.json";
+        public const string SwaggerName = "TGPro.BackendAPI v1";
+        public const string OpenApiTitle = "TGPro.BackendAPI";
+        public const string OpenApiVersion = "v1";
+
+        public const string AllowOrigin = "AllowOrigin";
+        public const string ManagementPageUrl = "https://localhost:4200";
+
         public static string _productFolder;
         public static string _trademarkFolder;
         public static string _userFolder;

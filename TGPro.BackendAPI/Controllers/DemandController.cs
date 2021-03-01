@@ -5,7 +5,7 @@ using TGPro.Service.ViewModel.Demands;
 
 namespace TGPro.BackendAPI.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("/api/demand")]
     [ApiController]
     public class DemandController : Controller
     {
@@ -28,8 +28,8 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(demand);
         }
 
-        [HttpGet("/demands")]
-        public async Task<IActionResult> GetListDemand()
+        [HttpGet("/api/demand/all")]
+        public async Task<IActionResult> GetAllDemand()
         {
             if (!ModelState.IsValid)
             {
@@ -41,7 +41,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(demand);
         }
 
-        [HttpPost("/create_demand")]
+        [HttpPost("/api/demand/add")]
         public async Task<IActionResult> Create([FromBody] DemandRequest request)
         {
             if (!ModelState.IsValid)
@@ -54,7 +54,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok();
         }
 
-        [HttpPut("/update_demand/{demandId}")]
+        [HttpPut("/api/demand/update/{demandId}")]
         public async Task<IActionResult> Update(int demandId, [FromBody] DemandRequest request)
         {
             if (!ModelState.IsValid)
@@ -67,7 +67,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("/delete_demand/{demandId}")]
+        [HttpDelete("/api/demand/delete/{demandId}")]
         public async Task<IActionResult> Delete(int demandId)
         {
             if (!ModelState.IsValid)

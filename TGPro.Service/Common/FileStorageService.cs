@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Threading.Tasks;
-using TGPro.Service.Utility;
+using TGPro.Service.SystemResources;
 
 namespace TGPro.Service.Common
 {

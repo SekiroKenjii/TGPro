@@ -5,7 +5,7 @@ using TGPro.Service.ViewModel.Trademarks;
 
 namespace TGPro.BackendAPI.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("/api/trademark")]
     [ApiController]
     public class TrademarkController : Controller
     {
@@ -28,8 +28,8 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(trademark);
         }
 
-        [HttpGet("/trademarks")]
-        public async Task<IActionResult> GetListTrademark()
+        [HttpGet("/api/trademark/all")]
+        public async Task<IActionResult> GetAllTrademark()
         {
             if(!ModelState.IsValid)
             {
@@ -41,7 +41,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(trademark);
         }
 
-        [HttpPost("/create_trademark")]
+        [HttpPost("/api/trademark/add")]
         public async Task<IActionResult> Create([FromForm] TrademarkRequest request)
         {
             if (!ModelState.IsValid)
@@ -54,7 +54,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok();
         }
 
-        [HttpPut("/update_trademark/{trademarkId}")]
+        [HttpPut("/api/trademark/update/{trademarkId}")]
         public async Task<IActionResult> Update(int trademarkId, [FromForm] TrademarkRequest request)
         {
             if (!ModelState.IsValid)
@@ -67,7 +67,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("/delete_trademark/{trademarkId}")]
+        [HttpDelete("/api/trademark/delete/{trademarkId}")]
         public async Task<IActionResult> DeleteTrademark(int trademarkId)
         {
             if (!ModelState.IsValid)

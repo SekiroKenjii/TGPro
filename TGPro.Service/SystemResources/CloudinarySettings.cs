@@ -1,4 +1,4 @@
-﻿namespace TGPro.Service.Utility
+﻿namespace TGPro.Service.SystemResources
 {
     public class CloudinarySettings
     {

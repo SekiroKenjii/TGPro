@@ -6,13 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TGPro.Data.EF;
-using TGPro.Data.Utility;
 using TGPro.Service.Catalog.Categories;
 using TGPro.Service.Catalog.Conditions;
 using TGPro.Service.Catalog.Demands;
 using TGPro.Service.Catalog.Trademarks;
+using TGPro.Service.Catalog.Vendors;
 using TGPro.Service.Common;
-using TGPro.Service.Utility;
+using TGPro.Service.SystemResources;
 
 namespace TGPro.BackendAPI
 {
@@ -25,16 +25,17 @@ namespace TGPro.BackendAPI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //add CORS
             services.AddCors(c =>
             {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                c.AddPolicy(ConstantStrings.AllowOrigin, options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
+            //DB connection
             services.AddDbContext<TGProDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(Data.Utility.ConstantStrings.DbConnectionString)));
+                options.UseSqlServer(Configuration.GetConnectionString(ConstantStrings.DbConnectionString)));
 
             //declare DI
             services.AddTransient<IStorageService, FileStorageService>();
@@ -42,14 +43,16 @@ namespace TGPro.BackendAPI
             services.AddTransient<IConditionService, ConditionService>();
             services.AddTransient<IDemandService, DemandService>();
             services.AddTransient<ITrademarkService, TrademarkService>();
+            services.AddTransient<IVendorService, VendorService>();
 
-            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+            services.Configure<CloudinarySettings>(Configuration.GetSection(ConstantStrings.CloudinarySetting));
 
             services.AddControllers();
 
+            //add Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TGPro.BackendAPI", Version = "v1" });
+                c.SwaggerDoc(ConstantStrings.OpenApiVersion, new OpenApiInfo { Title = ConstantStrings.OpenApiTitle, Version = ConstantStrings.OpenApiVersion });
             });
 
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
@@ -57,7 +60,6 @@ namespace TGPro.BackendAPI
             );
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
@@ -66,7 +68,7 @@ namespace TGPro.BackendAPI
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TGPro.BackendAPI v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint(ConstantStrings.SwaggerUrl, ConstantStrings.SwaggerName));
             }
 
             app.UseHttpsRedirection();

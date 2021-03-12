@@ -5,7 +5,7 @@ using TGPro.Service.ViewModel.Conditions;
 
 namespace TGPro.BackendAPI.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("/api/condition")]
     [ApiController]
     public class ConditionController : Controller
     {
@@ -28,8 +28,8 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(condition);
         }
 
-        [HttpGet("/conditions")]
-        public async Task<IActionResult> GetListCondition()
+        [HttpGet("/api/condition/all")]
+        public async Task<IActionResult> GetAllCondition()
         {
             if (!ModelState.IsValid)
             {
@@ -41,7 +41,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(condition);
         }
 
-        [HttpPost("/create_condition")]
+        [HttpPost("/api/condition/add")]
         public async Task<IActionResult> Create([FromBody] ConditionRequest request)
         {
             if (!ModelState.IsValid)
@@ -54,7 +54,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok();
         }
 
-        [HttpPut("/update_condition/{conditionId}")]
+        [HttpPut("/api/condition/update/{conditionId}")]
         public async Task<IActionResult> Update(int conditionId, [FromBody] ConditionRequest request)
         {
             if (!ModelState.IsValid)
@@ -67,7 +67,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("/delete_condition/{conditionId}")]
+        [HttpDelete("/api/condition/delete/{conditionId}")]
         public async Task<IActionResult> Delete(int conditionId)
         {
             if (!ModelState.IsValid)

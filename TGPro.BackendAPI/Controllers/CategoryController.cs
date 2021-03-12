@@ -5,8 +5,7 @@ using TGPro.Service.ViewModel.Categories;
 
 namespace TGPro.BackendAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    //[Route("/api/category")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -28,8 +27,8 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(category);
         }
 
-        [HttpGet("/categories")]
-        public async Task<IActionResult> GetListCategory()
+        [HttpGet("/api/category/all")]
+        public async Task<IActionResult> GetAllCategory()
         {
             if (!ModelState.IsValid)
             {
@@ -41,8 +40,8 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(category);
         }
 
-        [HttpPost("/create_category")]
-        public async Task<IActionResult> Create([FromBody] CategoryRequest request)
+        [HttpPost("/api/category/add")]
+        public async Task<IActionResult> AddCategory([FromBody] CategoryRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -54,8 +53,8 @@ namespace TGPro.BackendAPI.Controllers
             return Ok();
         }
 
-        [HttpPut("/update_category/{categoryId}")]
-        public async Task<IActionResult> Update(int categoryId, [FromBody] CategoryRequest request)
+        [HttpPut("/api/category/update/{categoryId}")]
+        public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CategoryRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -67,8 +66,8 @@ namespace TGPro.BackendAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("/delete_category/{categoryId}")]
-        public async Task<IActionResult> Delete(int categoryId)
+        [HttpDelete("/api/category/delete/{categoryId}")]
+        public async Task<IActionResult> DeleteCategory(int categoryId)
         {
             if (!ModelState.IsValid)
             {

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using TGPro.Data.Utility;
 
 namespace TGPro.Data.EF
 {
@@ -15,7 +14,7 @@ namespace TGPro.Data.EF
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var connectionString = configuration.GetConnectionString(ConstantStrings.DbConnectionString);
+            var connectionString = configuration.GetConnectionString("TGProDb");
 
             var optionsBuilder = new DbContextOptionsBuilder<TGProDbContext>();
             optionsBuilder.UseSqlServer(connectionString);

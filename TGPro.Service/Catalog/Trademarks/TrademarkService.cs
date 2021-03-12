@@ -11,7 +11,7 @@ using TGPro.Data.EF;
 using TGPro.Data.Entities;
 using TGPro.Service.Common;
 using TGPro.Service.Exceptions;
-using TGPro.Service.Utility;
+using TGPro.Service.SystemResources;
 using TGPro.Service.ViewModel.Trademarks;
 
 namespace TGPro.Service.Catalog.Trademarks

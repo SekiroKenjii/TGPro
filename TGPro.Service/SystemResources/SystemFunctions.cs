@@ -40,5 +40,15 @@ namespace TGPro.Service.SystemResources
             string rString = $"{inputFileName}-{Guid.NewGuid()}{Path.GetExtension(inputOriginalFileName)}";
             return rString;
         }
+
+        public static string FindByIdError(string controller, int id)
+        {
+            return $"Cannot find any {controller} with id: {id}!";
+        }
+
+        public static string GetAllError(string controller)
+        {
+            return $"Cannot find any {controller}!";
+        }
     }
 }

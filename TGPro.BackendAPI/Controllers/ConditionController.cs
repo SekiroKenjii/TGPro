@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Conditions;
+using TGPro.Service.SystemResources;
 using TGPro.Service.ViewModel.Conditions;
 
 namespace TGPro.BackendAPI.Controllers
@@ -15,7 +16,7 @@ namespace TGPro.BackendAPI.Controllers
             _conditionService = conditionService;
         }
 
-        [HttpGet("/condition_by_id/{conditionId}")]
+        [HttpGet("/api/condition/{conditionId}")]
         public async Task<IActionResult> GetById(int conditionId)
         {
             if (!ModelState.IsValid)
@@ -24,7 +25,7 @@ namespace TGPro.BackendAPI.Controllers
             }
             var condition = await _conditionService.GetById(conditionId);
             if (condition == null)
-                return BadRequest();
+                return NotFound(SystemFunctions.FindByIdError("condition", conditionId));
             return Ok(condition);
         }
 
@@ -37,33 +38,39 @@ namespace TGPro.BackendAPI.Controllers
             }
             var condition = await _conditionService.GetListCondition();
             if (condition.Count == 0)
-                return BadRequest();
+                return NotFound(SystemFunctions.GetAllError("condition"));
             return Ok(condition);
         }
 
         [HttpPost("/api/condition/add")]
-        public async Task<IActionResult> Create([FromBody] ConditionRequest request)
+        public async Task<IActionResult> Create([FromForm] ConditionRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             var affectedResult = await _conditionService.Create(request);
+            if (affectedResult == ConstantStrings.TGBadRequest)
+                return BadRequest(ConstantStrings.emptyNameFieldError);
             if (affectedResult == 0)
-                return BadRequest();
+                return BadRequest(ConstantStrings.undefinedError);
             return Ok();
         }
 
         [HttpPut("/api/condition/update/{conditionId}")]
-        public async Task<IActionResult> Update(int conditionId, [FromBody] ConditionRequest request)
+        public async Task<IActionResult> Update(int conditionId, [FromForm] ConditionRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             var affectedResult = await _conditionService.Update(conditionId, request);
+            if (affectedResult == ConstantStrings.TGNotFound)
+                return NotFound(SystemFunctions.FindByIdError("condition", conditionId));
+            if (affectedResult == ConstantStrings.TGBadRequest)
+                return BadRequest(ConstantStrings.emptyNameFieldError);
             if (affectedResult == 0)
-                return BadRequest();
+                return BadRequest(ConstantStrings.undefinedError);
             return Ok();
         }
 
@@ -75,8 +82,10 @@ namespace TGPro.BackendAPI.Controllers
                 return BadRequest(ModelState);
             }
             var affectedResult = await _conditionService.Delete(conditionId);
+            if (affectedResult == ConstantStrings.TGNotFound)
+                return NotFound(SystemFunctions.FindByIdError("condition", conditionId));
             if (affectedResult == 0)
-                return BadRequest();
+                return BadRequest(ConstantStrings.undefinedError);
             return Ok();
         }
     }

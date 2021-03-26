@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TGPro.Data.EF;
+using TGPro.Data.Entities;
 using TGPro.Service.Catalog.Categories;
 using TGPro.Service.Catalog.Conditions;
 using TGPro.Service.Catalog.Demands;
@@ -33,6 +35,10 @@ namespace TGPro.BackendAPI
                 c.AddPolicy(ConstantStrings.AllowOrigin, options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
 
+            services.AddIdentity<AppUser, AppRole>()
+                .AddEntityFrameworkStores<TGProDbContext>()
+                .AddDefaultTokenProviders();
+
             //DB connection
             services.AddDbContext<TGProDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString(ConstantStrings.DbConnectionString)));
@@ -44,6 +50,9 @@ namespace TGPro.BackendAPI
             services.AddTransient<IDemandService, DemandService>();
             services.AddTransient<ITrademarkService, TrademarkService>();
             services.AddTransient<IVendorService, VendorService>();
+            services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();
+            services.AddTransient<SignInManager<AppUser>, SignInManager<AppUser>>();
+            services.AddTransient<RoleManager<AppRole>, RoleManager<AppRole>>();
 
             services.Configure<CloudinarySettings>(Configuration.GetSection(ConstantStrings.CloudinarySetting));
 

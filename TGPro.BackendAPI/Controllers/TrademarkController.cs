@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Trademarks;
+using TGPro.Service.SystemResources;
 using TGPro.Service.ViewModel.Trademarks;
 
 namespace TGPro.BackendAPI.Controllers
@@ -15,7 +16,7 @@ namespace TGPro.BackendAPI.Controllers
             _trademarkService = trademarkService;
         }
 
-        [HttpGet("/trademark_by_id/{trademarkId}")]
+        [HttpGet("/api/trademark/{trademarkId}")]
         public async Task<IActionResult> GetById(int trademarkId)
         {
             if (!ModelState.IsValid)
@@ -24,7 +25,7 @@ namespace TGPro.BackendAPI.Controllers
             }
             var trademark = await _trademarkService.GetById(trademarkId);
             if (trademark == null)
-                return BadRequest();
+                return NotFound(SystemFunctions.FindByIdError("trademarks", trademarkId));
             return Ok(trademark);
         }
 
@@ -37,7 +38,7 @@ namespace TGPro.BackendAPI.Controllers
             }
             var trademark = await _trademarkService.GetListTrademark();
             if (trademark.Count == 0)
-                return BadRequest();
+                return NotFound(SystemFunctions.GetAllError("trademarks"));
             return Ok(trademark);
         }
 
@@ -49,8 +50,10 @@ namespace TGPro.BackendAPI.Controllers
                 return BadRequest(ModelState);
             }
             var affectedResult = await _trademarkService.Create(request);
+            if (affectedResult == ConstantStrings.TGBadRequest)
+                return BadRequest(ConstantStrings.emptyNameFieldError);
             if (affectedResult == 0)
-                return BadRequest();
+                return BadRequest(ConstantStrings.undefinedError);
             return Ok();
         }
 
@@ -62,8 +65,14 @@ namespace TGPro.BackendAPI.Controllers
                 return BadRequest(ModelState);
             }
             var affectedResult = await _trademarkService.Update(trademarkId, request);
+            if (affectedResult == ConstantStrings.TGNotFound)
+                return NotFound(SystemFunctions.FindByIdError("trademarks", trademarkId));
+            if (affectedResult == ConstantStrings.TGBadRequest)
+                return BadRequest(ConstantStrings.emptyNameFieldError);
+            if (affectedResult == ConstantStrings.TGCloudError)
+                return BadRequest(ConstantStrings.cloudDeleteFailed);
             if (affectedResult == 0)
-                return BadRequest();
+                return BadRequest(ConstantStrings.undefinedError);
             return Ok();
         }
 
@@ -75,8 +84,12 @@ namespace TGPro.BackendAPI.Controllers
                 return BadRequest(ModelState);
             }
             var affectedResult = await _trademarkService.Delete(trademarkId);
+            if (affectedResult == ConstantStrings.TGNotFound)
+                return NotFound(SystemFunctions.FindByIdError("trademarks", trademarkId));
+            if (affectedResult == ConstantStrings.TGCloudError)
+                return BadRequest(ConstantStrings.cloudDeleteFailed);
             if (affectedResult == 0)
-                return BadRequest();
+                return BadRequest(ConstantStrings.undefinedError);
             return Ok();
         }
     }

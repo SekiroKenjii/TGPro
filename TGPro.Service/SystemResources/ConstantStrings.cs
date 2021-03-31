@@ -27,5 +27,13 @@
         public const string defaultFemaleImage = "default_female_image.jpg";
 
         public const string CL_TRADEMARK_IMAGE_FOLDER = "upload/img/trademark/";
+
+        public const int TGNotFound = -1;
+        public const int TGBadRequest = -2;
+        public const int TGCloudError = -10;
+
+        public const string undefinedError = "Something went wrong!";
+        public const string emptyNameFieldError = "Name field cannot be null!";
+        public const string cloudDeleteFailed = "Something went wrong! Cannot delete image in the cloud.";
     }
 }

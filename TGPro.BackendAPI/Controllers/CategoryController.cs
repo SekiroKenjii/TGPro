@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Categories;
+using TGPro.Service.SystemResources;
 using TGPro.Service.ViewModel.Categories;
 
 namespace TGPro.BackendAPI.Controllers
@@ -14,7 +15,7 @@ namespace TGPro.BackendAPI.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet("/category_by_id/{categoryId}")]
+        [HttpGet("/api/category/{categoryId}")]
         public async Task<IActionResult> GetById(int categoryId)
         {
             if (!ModelState.IsValid)
@@ -23,7 +24,7 @@ namespace TGPro.BackendAPI.Controllers
             }
             var category = await _categoryService.GetById(categoryId);
             if (category == null)
-                return BadRequest();
+                return NotFound(SystemFunctions.FindByIdError("categories", categoryId));
             return Ok(category);
         }
 
@@ -36,33 +37,36 @@ namespace TGPro.BackendAPI.Controllers
             }
             var category = await _categoryService.GetListCategory();
             if (category.Count == 0)
-                return BadRequest();
+                return NotFound(SystemFunctions.GetAllError("categories"));
             return Ok(category);
         }
 
         [HttpPost("/api/category/add")]
-        public async Task<IActionResult> AddCategory([FromBody] CategoryRequest request)
+        public async Task<IActionResult> AddCategory([FromForm] CategoryRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var affectedResult = await _categoryService.Create(request);
+            if (affectedResult == ConstantStrings.TGBadRequest)
+                return BadRequest(ConstantStrings.emptyNameFieldError);
             if (affectedResult == 0)
-                return BadRequest();
+                return BadRequest(ConstantStrings.undefinedError);
             return Ok();
         }
 
         [HttpPut("/api/category/update/{categoryId}")]
-        public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CategoryRequest request)
+        public async Task<IActionResult> UpdateCategory(int categoryId, [FromForm] CategoryRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             var affectedResult = await _categoryService.Update(categoryId, request);
+            if (affectedResult == ConstantStrings.TGNotFound)
+                return NotFound(SystemFunctions.FindByIdError("categories", categoryId));
+            if (affectedResult == ConstantStrings.TGBadRequest)
+                return BadRequest(ConstantStrings.emptyNameFieldError);
             if (affectedResult == 0)
-                return BadRequest();
+                return BadRequest(ConstantStrings.undefinedError);
             return Ok();
         }
 
@@ -74,8 +78,10 @@ namespace TGPro.BackendAPI.Controllers
                 return BadRequest(ModelState);
             }
             var affectedResult = await _categoryService.Delete(categoryId);
+            if (affectedResult == ConstantStrings.TGNotFound)
+                return NotFound(SystemFunctions.FindByIdError("categories", categoryId));
             if (affectedResult == 0)
-                return BadRequest();
+                return BadRequest(ConstantStrings.undefinedError);
             return Ok();
         }
     }

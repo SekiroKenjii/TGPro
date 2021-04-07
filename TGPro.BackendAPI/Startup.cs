@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -5,9 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using TGPro.Data.EF;
 using TGPro.Data.Entities;
+using TGPro.Service.Catalog.Authentication;
 using TGPro.Service.Catalog.Categories;
 using TGPro.Service.Catalog.Conditions;
 using TGPro.Service.Catalog.Demands;
@@ -53,7 +57,31 @@ namespace TGPro.BackendAPI
             services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();
             services.AddTransient<SignInManager<AppUser>, SignInManager<AppUser>>();
             services.AddTransient<RoleManager<AppRole>, RoleManager<AppRole>>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ITokenService, TokenService>();
 
+            //JWT
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = Configuration["Tokens:Issuer"],
+                        ValidAudience = Configuration["Tokens:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+                    };
+                });
+
+            //Cloudinary
             services.Configure<CloudinarySettings>(Configuration.GetSection(ConstantStrings.CloudinarySetting));
 
             services.AddControllers();
@@ -61,7 +89,10 @@ namespace TGPro.BackendAPI
             //add Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(ConstantStrings.OpenApiVersion, new OpenApiInfo { Title = ConstantStrings.OpenApiTitle, Version = ConstantStrings.OpenApiVersion });
+                c.SwaggerDoc(ConstantStrings.OpenApiVersion, new OpenApiInfo
+                { 
+                    Title = ConstantStrings.OpenApiTitle, Version = ConstantStrings.OpenApiVersion
+                });
             });
 
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
@@ -83,6 +114,8 @@ namespace TGPro.BackendAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

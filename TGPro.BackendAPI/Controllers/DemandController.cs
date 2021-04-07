@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Demands;
 using TGPro.Service.SystemResources;
@@ -7,6 +8,7 @@ using TGPro.Service.ViewModel.Demands;
 namespace TGPro.BackendAPI.Controllers
 {
     //[Route("/api/demand")]
+    [Authorize(Roles = ConstantStrings.AdminRole)]
     [ApiController]
     public class DemandController : Controller
     {
@@ -23,10 +25,10 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var demand = await _demandService.GetById(demandId);
-            if (demand == null)
-                return NotFound(SystemFunctions.FindByIdError("demands", demandId));
-            return Ok(demand);
+            var result = await _demandService.GetById(demandId);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok(result.ResultObj);
         }
 
         [HttpGet("/api/demand/all")]
@@ -36,41 +38,35 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var demand = await _demandService.GetListDemand();
-            if (demand.Count == 0)
-                return NotFound(SystemFunctions.GetAllError("demands"));
-            return Ok(demand);
+            var result = await _demandService.GetListDemand();
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok(result.ResultObj);
         }
 
         [HttpPost("/api/demand/add")]
-        public async Task<IActionResult> Create([FromForm] DemandRequest request)
+        public async Task<IActionResult> Create([FromBody] DemandRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _demandService.Create(request);
-            if (affectedResult == ConstantStrings.TGBadRequest)
-                return BadRequest(ConstantStrings.emptyNameFieldError);
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _demandService.Create(request);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
 
         [HttpPut("/api/demand/update/{demandId}")]
-        public async Task<IActionResult> Update(int demandId, [FromForm] DemandRequest request)
+        public async Task<IActionResult> Update(int demandId, [FromBody] DemandRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _demandService.Update(demandId, request);
-            if (affectedResult == ConstantStrings.TGNotFound)
-                return NotFound(SystemFunctions.FindByIdError("demands", demandId));
-            if (affectedResult == ConstantStrings.TGBadRequest)
-                return BadRequest(ConstantStrings.emptyNameFieldError);
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _demandService.Update(demandId, request);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
 
@@ -81,11 +77,9 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _demandService.Delete(demandId);
-            if (affectedResult == ConstantStrings.TGNotFound)
-                return NotFound(SystemFunctions.FindByIdError("demands", demandId));
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _demandService.Delete(demandId);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
     }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TGPro.Data.Entities;
 using TGPro.Service.Common;
-using TGPro.Service.ViewModel.Authentication;
+using TGPro.Service.DTOs.Authentication;
+using TGPro.Service.DTOs.Authentication.ViewModel;
 
 namespace TGPro.Service.Catalog.Authentication
 {
@@ -18,7 +19,8 @@ namespace TGPro.Service.Catalog.Authentication
         Task<ApiResponse<string>> UpdateRole(Guid roleId, RoleRequest request);
         Task<ApiResponse<string>> DeleteRole(Guid roleId);
         //Employee
-        Task<ApiResponse<IList<AppUser>>> GetUsers(string userRoleRequest);
+        Task<ApiResponse<List<UserViewModel>>> GetUsers(string userRoleRequest);
         Task<ApiResponse<string>> AddUser(string userRoleRequest, UserRequest request);
+        Task<ApiResponse<string>> UpdateUser(Guid userId, UserRequest request);
     }
 }

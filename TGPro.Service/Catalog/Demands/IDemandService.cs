@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using TGPro.Data.Entities;
 using TGPro.Service.Common;
-using TGPro.Service.ViewModel.Demands;
+using TGPro.Service.DTOs.Demands;
 
 namespace TGPro.Service.Catalog.Demands
 {

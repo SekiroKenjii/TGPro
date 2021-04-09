@@ -34,7 +34,7 @@ namespace TGPro.Data.Extensions
                 PhoneNumberConfirmed = true,
                 FirstName = "Võ Trung",
                 LastName = "Thường",
-                Sex = Enums.Sex.Male,
+                Gender = Enums.Gender.Male,
                 Address = "KTX Khu B, Đại Học Quốc Gia TPHCM",
                 City = "Thành phố Hồ Chí Minh",
                 Country = "Việt Nam"

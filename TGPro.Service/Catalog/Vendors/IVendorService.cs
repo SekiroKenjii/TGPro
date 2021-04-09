@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using TGPro.Data.Entities;
 using TGPro.Service.Common;
-using TGPro.Service.ViewModel.Vendors;
+using TGPro.Service.DTOs.Vendors;
 
 namespace TGPro.Service.Catalog.Vendors
 {

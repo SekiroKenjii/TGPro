@@ -1,4 +1,4 @@
-﻿namespace TGPro.Service.ViewModel.Authentication
+﻿namespace TGPro.Service.DTOs.Authentication
 {
     public class TokenApiRequest
     {

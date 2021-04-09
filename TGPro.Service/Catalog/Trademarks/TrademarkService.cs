@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 using TGPro.Data.EF;
 using TGPro.Data.Entities;
 using TGPro.Service.Common;
-using TGPro.Service.SystemResources;
-using TGPro.Service.ViewModel.Trademarks;
+using TGPro.Service.DTOs.Trademarks;
 
 namespace TGPro.Service.Catalog.Trademarks
 {
@@ -33,7 +32,6 @@ namespace TGPro.Service.Catalog.Trademarks
             _cloudinary = new Cloudinary(account);
         }
 
-        [System.Obsolete]
         public async Task<ApiResponse<string>> Create(TrademarkRequest request)
         {
             if (string.IsNullOrEmpty(request.Name))
@@ -56,7 +54,7 @@ namespace TGPro.Service.Catalog.Trademarks
                     };
                     uploadResult = _cloudinary.Upload(uploadParams);
                 }
-                trademark.Image = uploadResult.Uri.ToString();
+                trademark.Image = uploadResult.SecureUrl.ToString();
                 trademark.PublicId = uploadResult.PublicId;
             }
             else
@@ -67,7 +65,7 @@ namespace TGPro.Service.Catalog.Trademarks
                     Folder = ConstantStrings.CL_TRADEMARK_IMAGE_FOLDER
                 };
                 uploadResult = _cloudinary.Upload(uploadParams);
-                trademark.Image = uploadResult.Uri.ToString();
+                trademark.Image = uploadResult.SecureUrl.ToString();
                 trademark.PublicId = uploadResult.PublicId;
             }
             _db.Trademarks.Add(trademark);
@@ -104,7 +102,6 @@ namespace TGPro.Service.Catalog.Trademarks
             return new ApiSuccessResponse<List<Trademark>>(lstTrademark);
         }
 
-        [System.Obsolete]
         public async Task<ApiResponse<string>> Update(int trademarkId, TrademarkRequest request)
         {
             var trademarkFromDb = await _db.Trademarks.FindAsync(trademarkId);
@@ -129,7 +126,7 @@ namespace TGPro.Service.Catalog.Trademarks
                         Folder = ConstantStrings.CL_TRADEMARK_IMAGE_FOLDER
                     };
                     uploadResult = _cloudinary.Upload(uploadParams);
-                    trademarkFromDb.Image = uploadResult.Uri.ToString();
+                    trademarkFromDb.Image = uploadResult.SecureUrl.ToString();
                     trademarkFromDb.PublicId = uploadResult.PublicId;
                 }
             }

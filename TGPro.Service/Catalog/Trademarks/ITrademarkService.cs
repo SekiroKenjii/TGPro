@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using TGPro.Data.Entities;
 using TGPro.Service.Common;
-using TGPro.Service.ViewModel.Trademarks;
+using TGPro.Service.DTOs.Trademarks;
 
 namespace TGPro.Service.Catalog.Trademarks
 {

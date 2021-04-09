@@ -13,7 +13,7 @@ namespace TGPro.Data.Entities
         public string City { get; set; }
         public string Country { get; set; }
         public string ProfilePicture { get; set; }
-        public Sex Sex { get; set; }
+        public Gender Gender { get; set; }
         public string AccessToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
         public string PublicId { get; set; }

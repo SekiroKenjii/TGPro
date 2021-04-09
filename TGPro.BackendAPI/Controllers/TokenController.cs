@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using TGPro.Data.Entities;
 using TGPro.Service.Catalog.Authentication;
-using TGPro.Service.ViewModel.Authentication;
+using TGPro.Service.DTOs.Authentication;
 
 namespace TGPro.BackendAPI.Controllers
 {

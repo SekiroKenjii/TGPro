@@ -1,6 +1,6 @@
-﻿namespace TGPro.Service.ViewModel.Authentication
+﻿namespace TGPro.Service.DTOs.Categories
 {
-    public class RoleRequest
+    public class CategoryRequest
     {
         public string Name { get; set; }
         public string Description { get; set; }

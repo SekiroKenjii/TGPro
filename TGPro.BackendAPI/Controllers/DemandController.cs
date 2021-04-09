@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Demands;
-using TGPro.Service.SystemResources;
-using TGPro.Service.ViewModel.Demands;
+using TGPro.Service.Common;
+using TGPro.Service.DTOs.Demands;
 
 namespace TGPro.BackendAPI.Controllers
 {

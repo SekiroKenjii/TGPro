@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using TGPro.Data.Enums;
 
-namespace TGPro.Service.ViewModel.Trademarks
+namespace TGPro.Service.DTOs.Trademarks
 {
     public class TrademarkRequest
     {

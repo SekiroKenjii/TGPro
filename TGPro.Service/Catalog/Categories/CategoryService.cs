@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 using TGPro.Data.EF;
 using TGPro.Data.Entities;
 using TGPro.Service.Common;
-using TGPro.Service.SystemResources;
-using TGPro.Service.ViewModel.Categories;
+using TGPro.Service.DTOs.Categories;
 
 namespace TGPro.Service.Catalog.Categories
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TGPro.Data.EF;
 using TGPro.Data.Entities;
-using TGPro.Service.Exceptions;
+using TGPro.Service.Common;
 using TGPro.Service.SystemResources;
 using TGPro.Service.ViewModel.Vendors;
 
@@ -17,9 +17,10 @@ namespace TGPro.Service.Catalog.Vendors
         {
             _db = db;
         }
-        public async Task<int> Create(VendorRequest request)
+        public async Task<ApiResponse<string>> Create(VendorRequest request)
         {
-            if (request.Name == string.Empty) return ConstantStrings.TGBadRequest;
+            if (string.IsNullOrEmpty(request.Name))
+                return new ApiErrorResponse<string>(ConstantStrings.emptyNameFieldError);
             var vendor = new Vendor()
             {
                 Name = request.Name,
@@ -33,35 +34,42 @@ namespace TGPro.Service.Catalog.Vendors
                 Status = request.Status
             };
             _db.Vendors.Add(vendor);
-            return await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            return new ApiSuccessResponse<string>(ConstantStrings.addSuccessfully);
         }
-        public async Task<int> Delete(int vendorId)
+        public async Task<ApiResponse<string>> Delete(int vendorId)
         {
             var vendorFromDb = await _db.Vendors.FindAsync(vendorId);
-            if (vendorFromDb == null) return ConstantStrings.TGNotFound;
+            if (vendorFromDb == null)
+                return new ApiErrorResponse<string>(ConstantStrings.FindByIdError(vendorId));
             _db.Vendors.Remove(vendorFromDb);
-            return await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            return new ApiSuccessResponse<string>(ConstantStrings.deleteSuccessfully);
         }
 
-        public async Task<Vendor> GetById(int vendorId)
+        public async Task<ApiResponse<Vendor>> GetById(int vendorId)
         {
             var vendorFromDb = await _db.Vendors.FindAsync(vendorId);
-            if (vendorFromDb == null) return null;
-            return vendorFromDb;
+            if (vendorFromDb == null)
+                return new ApiErrorResponse<Vendor>(ConstantStrings.FindByIdError(vendorId));
+            return new ApiSuccessResponse<Vendor>(vendorFromDb);
         }
 
-        public async Task<List<Vendor>> GetListVendor()
+        public async Task<ApiResponse<List<Vendor>>> GetListVendor()
         {
             List<Vendor> lstVendor = await _db.Vendors.OrderBy(v => v.Name).ToListAsync();
-            if (lstVendor.Count == 0) return null;
-            return lstVendor;
+            if (lstVendor.Count == 0)
+                return new ApiErrorResponse<List<Vendor>>(ConstantStrings.getAllError);
+            return new ApiSuccessResponse<List<Vendor>>(lstVendor);
         }
 
-        public async Task<int> Update(int vendorId, VendorRequest request)
+        public async Task<ApiResponse<string>> Update(int vendorId, VendorRequest request)
         {
             var vendorFromDb = await _db.Vendors.FindAsync(vendorId);
-            if (vendorFromDb == null) return ConstantStrings.TGNotFound;
-            if (request.Name == null) return ConstantStrings.TGBadRequest;
+            if (vendorFromDb == null)
+                return new ApiErrorResponse<string>(ConstantStrings.FindByIdError(vendorId));
+            if (string.IsNullOrEmpty(request.Name))
+                return new ApiErrorResponse<string>(ConstantStrings.emptyNameFieldError);
             vendorFromDb.Name = request.Name;
             vendorFromDb.ContactName = request.ContactName;
             vendorFromDb.ContactTitle = request.ContactTitle;
@@ -72,7 +80,8 @@ namespace TGPro.Service.Catalog.Vendors
             vendorFromDb.HomePage = request.HomePage;
             vendorFromDb.Status = request.Status;
             _db.Vendors.Update(vendorFromDb);
-            return await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            return new ApiSuccessResponse<string>(ConstantStrings.editSuccessfully);
         }
     }
 }

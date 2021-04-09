@@ -16,7 +16,7 @@ namespace TGPro.Data.Extensions
             {
                 Id = roleId,
                 Name = "Admin",
-                NormalizedName = "admin",
+                NormalizedName = "ADMIN",
                 Description = "Application administrator role"
             });
             var hasher = new PasswordHasher<AppUser>();

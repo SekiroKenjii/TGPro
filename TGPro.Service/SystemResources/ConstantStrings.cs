@@ -27,13 +27,36 @@
         public const string defaultFemaleImage = "default_female_image.jpg";
 
         public const string CL_TRADEMARK_IMAGE_FOLDER = "upload/img/trademark/";
+        public const string CL_USER_IMAGE_FOLDER = "upload/img/user/";
 
-        public const int TGNotFound = -1;
-        public const int TGBadRequest = -2;
-        public const int TGCloudError = -10;
+        public const string AdminRole = "Admin";
+        public const string EmployeeRole = "Employee";
+        public const string WarehouseRole = "Warehouse Staff";
+        public const string CustomerOfficerRole = "Customer Officer";
+        public const string CustomerRole = "Customer";
 
-        public const string undefinedError = "Something went wrong!";
-        public const string emptyNameFieldError = "Name field cannot be null!";
-        public const string cloudDeleteFailed = "Something went wrong! Cannot delete image in the cloud.";
+        public const string undefinedError = "Lỗi chưa xác định.";
+        public const string emptyNameFieldError = "Trường tên không được rỗng!";
+
+        public const string addSuccessfully = "Tạo mới thành công!";
+        public const string editSuccessfully = "Chỉnh sửa thành công!";
+        public const string deleteSuccessfully = "Xoá thành công!";
+        public const string addUnuccessfully = "Tạo mới không thành công!";
+        public const string editUnuccessfully = "Chỉnh sửa không thành công!";
+        public const string deleteUnuccessfully = "Xoá không thành công!";
+        public const string userInfoIncorrect = "Tài khoản hoặc mật khẩu không đúng!";
+        public const string userNotExist = "Tài khoản không tồn tại!";
+        public const string cloudDeleteFailed = "Lỗi xoá ảnh trên đám mây!";
+        public const string getAllError = "Không có dữ liệu nào được tìm thấy!";
+
+        public const string createConnectionError = "Không thể kết nối tới server!";
+
+        public const string roleExisted = "Quyền này đã tồn tại!";
+        public const string roleNotExisted = "Quyền này không tồn tại!";
+
+        public static string FindByIdError(int id)
+        {
+            return $"Không thể tìm thấy dữ liệu nào ứng với id: {id}!";
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TGPro.Data.EF;
 using TGPro.Data.Entities;
+using TGPro.Service.Common;
 using TGPro.Service.SystemResources;
 using TGPro.Service.ViewModel.Demands;
 
@@ -16,47 +17,56 @@ namespace TGPro.Service.Catalog.Demands
         {
             _db = db;
         }
-        public async Task<int> Create(DemandRequest request)
+        public async Task<ApiResponse<string>> Create(DemandRequest request)
         {
-            if (request.Name == string.Empty) return ConstantStrings.TGBadRequest;
+            if (string.IsNullOrEmpty(request.Name))
+                return new ApiErrorResponse<string>(ConstantStrings.emptyNameFieldError);
             var demand = new Demand()
             {
                 Name = request.Name
             };
             _db.Demands.Add(demand);
-            return await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            return new ApiSuccessResponse<string>(ConstantStrings.addSuccessfully);
         }
 
-        public async Task<int> Delete(int demandId)
+        public async Task<ApiResponse<string>> Delete(int demandId)
         {
             var demandFromDb = await _db.Demands.FindAsync(demandId);
-            if (demandFromDb == null) return ConstantStrings.TGNotFound;
+            if (demandFromDb == null)
+                return new ApiErrorResponse<string>(ConstantStrings.FindByIdError(demandId));
             _db.Demands.Remove(demandFromDb);
-            return await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            return new ApiSuccessResponse<string>(ConstantStrings.deleteSuccessfully);
         }
 
-        public async Task<Demand> GetById(int demandId)
+        public async Task<ApiResponse<Demand>> GetById(int demandId)
         {
             var demandFromDb = await _db.Demands.FindAsync(demandId);
-            if (demandFromDb == null) return null;
-            return demandFromDb;
+            if (demandFromDb == null)
+                return new ApiErrorResponse<Demand>(ConstantStrings.FindByIdError(demandId));
+            return new ApiSuccessResponse<Demand>(demandFromDb);
         }
 
-        public async Task<List<Demand>> GetListDemand()
+        public async Task<ApiResponse<List<Demand>>> GetListDemand()
         {
             List<Demand> lstDemand = await _db.Demands.OrderBy(d => d.Name).ToListAsync();
-            if (lstDemand.Count == 0) return null;
-            return lstDemand;
+            if (lstDemand.Count == 0)
+                return new ApiErrorResponse<List<Demand>>(ConstantStrings.getAllError);
+            return new ApiSuccessResponse<List<Demand>>(lstDemand);
         }
 
-        public async Task<int> Update(int demandId, DemandRequest request)
+        public async Task<ApiResponse<string>> Update(int demandId, DemandRequest request)
         {
             var demandFromDb = await _db.Demands.FindAsync(demandId);
-            if (demandFromDb == null) return ConstantStrings.TGNotFound;
-            if (request.Name == null) return ConstantStrings.TGBadRequest;
+            if (demandFromDb == null)
+                return new ApiErrorResponse<string>(ConstantStrings.FindByIdError(demandId));
+            if (string.IsNullOrEmpty(request.Name))
+                return new ApiErrorResponse<string>(ConstantStrings.emptyNameFieldError);
             demandFromDb.Name = request.Name;
             _db.Demands.Update(demandFromDb);
-            return await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            return new ApiSuccessResponse<string>(ConstantStrings.editSuccessfully);
         }
     }
 }

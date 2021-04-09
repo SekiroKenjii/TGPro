@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TGPro.Data.EF;
 
 namespace TGPro.Data.Migrations
 {
     [DbContext(typeof(TGProDbContext))]
-    partial class TGProDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210329030907_AddPublicIdtoAppUser")]
+    partial class AddPublicIdtoAppUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,7 +151,7 @@ namespace TGPro.Data.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "b935e103-87d1-4458-881b-2eb63089463d",
+                            ConcurrencyStamp = "de32b5a2-3a0d-4023-bb6e-43ce2eccc9c9",
                             Description = "Application administrator role",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
@@ -164,9 +166,6 @@ namespace TGPro.Data.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
-
-                    b.Property<string>("AccessToken")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Address")
                         .HasMaxLength(200)
@@ -224,6 +223,9 @@ namespace TGPro.Data.Migrations
                     b.Property<string>("PublicId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("RefreshTokenExpiryTime")
                         .HasColumnType("datetime2");
 
@@ -252,7 +254,7 @@ namespace TGPro.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "KTX Khu B, Đại Học Quốc Gia TPHCM",
                             City = "Thành phố Hồ Chí Minh",
-                            ConcurrencyStamp = "92bdb775-155d-4720-a2b0-57d53ad5b223",
+                            ConcurrencyStamp = "98f69526-3794-4152-b8a0-2e2382dd48c8",
                             Country = "Việt Nam",
                             Email = "trungthuongvo109@gmail.com",
                             EmailConfirmed = true,
@@ -261,7 +263,7 @@ namespace TGPro.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "trungthuongvo109@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEF8Ga9Wb0o+0Q+Kmo0XMj9n3vcXJeJ7BgZi4bsP6PkjzSdOMy3coqRVcoJW3jzX0Nw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELqT+rcGt2w1TcoWwas4tduj/WI875XF64BcRAwzzI/te3MqVSo3urlHXUoAHjxR8A==",
                             PhoneNumber = "0375274267",
                             PhoneNumberConfirmed = true,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),

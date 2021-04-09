@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TGPro.Data.EF;
 using TGPro.Data.Entities;
+using TGPro.Service.Common;
 using TGPro.Service.SystemResources;
 using TGPro.Service.ViewModel.Categories;
 
@@ -17,49 +18,58 @@ namespace TGPro.Service.Catalog.Categories
             _db = db;
         }
 
-        public async Task<int> Create(CategoryRequest request)
+        public async Task<ApiResponse<string>> Create(CategoryRequest request)
         {
-            if (request.Name == string.Empty) return ConstantStrings.TGBadRequest;
+            if (string.IsNullOrEmpty(request.Name))
+                return new ApiErrorResponse<string>(ConstantStrings.emptyNameFieldError);
             var category = new Category()
             {
                 Name = request.Name,
                 Description = request.Description
             };
             _db.Categories.Add(category);
-            return await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            return new ApiSuccessResponse<string>(ConstantStrings.addSuccessfully);
         }
 
-        public async Task<int> Delete(int categoryId)
+        public async Task<ApiResponse<string>> Delete(int categoryId)
         {
             var categoryFromDb = await _db.Categories.FindAsync(categoryId);
-            if (categoryFromDb == null) return ConstantStrings.TGNotFound;
+            if (categoryFromDb == null) 
+                return new ApiErrorResponse<string>(ConstantStrings.FindByIdError(categoryId));
             _db.Categories.Remove(categoryFromDb);
-            return await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            return new ApiSuccessResponse<string>(ConstantStrings.deleteSuccessfully);
         }
 
-        public async Task<Category> GetById(int categoryId)
+        public async Task<ApiResponse<Category>> GetById(int categoryId)
         {
             var categoryFromDb = await _db.Categories.FindAsync(categoryId);
-            if (categoryFromDb == null) return null;
-            return categoryFromDb;
+            if (categoryFromDb == null)
+                return new ApiErrorResponse<Category>(ConstantStrings.FindByIdError(categoryId));
+            return new ApiSuccessResponse<Category>(categoryFromDb);
         }
 
-        public async Task<List<Category>> GetListCategory()
+        public async Task<ApiResponse<List<Category>>> GetListCategory()
         {
             List<Category> lstCategory = await _db.Categories.OrderBy(c => c.Name).ToListAsync();
-            if (lstCategory.Count == 0) return null;
-            return lstCategory;
+            if (lstCategory.Count == 0)
+                return new ApiErrorResponse<List<Category>>(ConstantStrings.getAllError);
+            return new ApiSuccessResponse<List<Category>>(lstCategory);
         }
 
-        public async Task<int> Update(int categoryId, CategoryRequest request)
+        public async Task<ApiResponse<string>> Update(int categoryId, CategoryRequest request)
         {
+            if (string.IsNullOrEmpty(request.Name))
+                return new ApiErrorResponse<string>(ConstantStrings.emptyNameFieldError);
             var categoryFromDb = await _db.Categories.FindAsync(categoryId);
-            if (categoryFromDb == null) return ConstantStrings.TGNotFound;
-            if (request.Name == null) return ConstantStrings.TGBadRequest;
+            if (categoryFromDb == null)
+                return new ApiErrorResponse<string>(ConstantStrings.FindByIdError(categoryId));
             categoryFromDb.Name = request.Name;
             categoryFromDb.Description = request.Description;
             _db.Categories.Update(categoryFromDb);
-            return await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
+            return new ApiSuccessResponse<string>(ConstantStrings.editSuccessfully);
         }
     }
 }

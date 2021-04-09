@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TGPro.Data.Entities;
+using TGPro.Service.Common;
 using TGPro.Service.ViewModel.Demands;
 
 namespace TGPro.Service.Catalog.Demands
 {
     public interface IDemandService
     {
-        Task<int> Create(DemandRequest request);
+        Task<ApiResponse<string>> Create(DemandRequest request);
 
-        Task<int> Update(int demandId, DemandRequest request);
+        Task<ApiResponse<string>> Update(int demandId, DemandRequest request);
 
-        Task<int> Delete(int demandId);
+        Task<ApiResponse<string>> Delete(int demandId);
 
-        Task<Demand> GetById(int demandId);
+        Task<ApiResponse<Demand>> GetById(int demandId);
 
-        Task<List<Demand>> GetListDemand();
+        Task<ApiResponse<List<Demand>>> GetListDemand();
     }
 }

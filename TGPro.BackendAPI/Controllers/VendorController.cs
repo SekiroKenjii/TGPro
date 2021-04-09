@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Vendors;
 using TGPro.Service.SystemResources;
@@ -7,6 +8,7 @@ using TGPro.Service.ViewModel.Vendors;
 namespace TGPro.BackendAPI.Controllers
 {
     //[Route("/api/vendor")]
+    [Authorize(Roles = ConstantStrings.AdminRole)]
     [ApiController]
     public class VendorController : Controller
     {
@@ -23,10 +25,10 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var vendor = await _vendorService.GetById(vendorId);
-            if (vendor == null)
-                return NotFound(SystemFunctions.FindByIdError("vendors", vendorId));
-            return Ok(vendor);
+            var result = await _vendorService.GetById(vendorId);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok(result.ResultObj);
         }
 
         [HttpGet("/api/vendor/all")]
@@ -36,10 +38,10 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var vendor = await _vendorService.GetListVendor();
-            if (vendor.Count == 0)
-                return NotFound(SystemFunctions.GetAllError("vendors"));
-            return Ok(vendor);
+            var result = await _vendorService.GetListVendor();
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok(result.ResultObj);
         }
 
         [HttpPost("/api/vendor/add")]
@@ -49,11 +51,9 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _vendorService.Create(request);
-            if (affectedResult == ConstantStrings.TGBadRequest)
-                return BadRequest(ConstantStrings.emptyNameFieldError);
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _vendorService.Create(request);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
 
@@ -64,11 +64,9 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _vendorService.Delete(vendorId);
-            if (affectedResult == ConstantStrings.TGNotFound)
-                return NotFound(SystemFunctions.FindByIdError("vendors", vendorId));
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _vendorService.Delete(vendorId);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
 
@@ -79,13 +77,9 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _vendorService.Update(vendorId, request);
-            if (affectedResult == ConstantStrings.TGNotFound)
-                return NotFound(SystemFunctions.FindByIdError("vendors", vendorId));
-            if (affectedResult == ConstantStrings.TGBadRequest)
-                return BadRequest(ConstantStrings.emptyNameFieldError);
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _vendorService.Update(vendorId, request);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
     }

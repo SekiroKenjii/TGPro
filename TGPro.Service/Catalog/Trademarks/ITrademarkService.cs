@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TGPro.Data.Entities;
+using TGPro.Service.Common;
 using TGPro.Service.ViewModel.Trademarks;
 
 namespace TGPro.Service.Catalog.Trademarks
 {
     public interface ITrademarkService
     {
-        Task<int> Create(TrademarkRequest request);
+        Task<ApiResponse<string>> Create(TrademarkRequest request);
 
-        Task<int> Update(int trademarkId, TrademarkRequest request);
+        Task<ApiResponse<string>> Update(int trademarkId, TrademarkRequest request);
 
-        Task<int> Delete(int trademarkId);
+        Task<ApiResponse<string>> Delete(int trademarkId);
 
-        Task<Trademark> GetById(int trademarkId);
+        Task<ApiResponse<Trademark>> GetById(int trademarkId);
 
-        Task<List<Trademark>> GetListTrademark();
+        Task<ApiResponse<List<Trademark>>> GetListTrademark();
     }
 }

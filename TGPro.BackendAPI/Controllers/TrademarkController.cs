@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Trademarks;
 using TGPro.Service.SystemResources;
@@ -7,6 +8,7 @@ using TGPro.Service.ViewModel.Trademarks;
 namespace TGPro.BackendAPI.Controllers
 {
     //[Route("/api/trademark")]
+    [Authorize(Roles = ConstantStrings.AdminRole)]
     [ApiController]
     public class TrademarkController : Controller
     {
@@ -23,10 +25,10 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var trademark = await _trademarkService.GetById(trademarkId);
-            if (trademark == null)
-                return NotFound(SystemFunctions.FindByIdError("trademarks", trademarkId));
-            return Ok(trademark);
+            var result = await _trademarkService.GetById(trademarkId);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok(result.ResultObj);
         }
 
         [HttpGet("/api/trademark/all")]
@@ -36,10 +38,10 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var trademark = await _trademarkService.GetListTrademark();
-            if (trademark.Count == 0)
-                return NotFound(SystemFunctions.GetAllError("trademarks"));
-            return Ok(trademark);
+            var result = await _trademarkService.GetListTrademark();
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok(result.ResultObj);
         }
 
         [HttpPost("/api/trademark/add")]
@@ -49,11 +51,9 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _trademarkService.Create(request);
-            if (affectedResult == ConstantStrings.TGBadRequest)
-                return BadRequest(ConstantStrings.emptyNameFieldError);
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _trademarkService.Create(request);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
 
@@ -64,15 +64,9 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _trademarkService.Update(trademarkId, request);
-            if (affectedResult == ConstantStrings.TGNotFound)
-                return NotFound(SystemFunctions.FindByIdError("trademarks", trademarkId));
-            if (affectedResult == ConstantStrings.TGBadRequest)
-                return BadRequest(ConstantStrings.emptyNameFieldError);
-            if (affectedResult == ConstantStrings.TGCloudError)
-                return BadRequest(ConstantStrings.cloudDeleteFailed);
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _trademarkService.Update(trademarkId, request);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
 
@@ -83,13 +77,9 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _trademarkService.Delete(trademarkId);
-            if (affectedResult == ConstantStrings.TGNotFound)
-                return NotFound(SystemFunctions.FindByIdError("trademarks", trademarkId));
-            if (affectedResult == ConstantStrings.TGCloudError)
-                return BadRequest(ConstantStrings.cloudDeleteFailed);
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _trademarkService.Delete(trademarkId);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
     }

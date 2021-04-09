@@ -39,5 +39,6 @@ namespace TGPro.Data.EF
         public DbSet<Condition> Conditions { get; set; }
         public DbSet<Demand> Demands { get; set; }
         public DbSet<Trademark> Trademarks { get; set; }
+        public DbSet<AppRole> AppRoles { get; set; }
     }
 }

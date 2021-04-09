@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Categories;
 using TGPro.Service.SystemResources;
@@ -7,6 +8,8 @@ using TGPro.Service.ViewModel.Categories;
 namespace TGPro.BackendAPI.Controllers
 {
     //[Route("/api/category")]
+    [Authorize(Roles = ConstantStrings.AdminRole)]
+    [ApiController]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -22,10 +25,10 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var category = await _categoryService.GetById(categoryId);
-            if (category == null)
-                return NotFound(SystemFunctions.FindByIdError("categories", categoryId));
-            return Ok(category);
+            var result = await _categoryService.GetById(categoryId);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok(result.ResultObj);
         }
 
         [HttpGet("/api/category/all")]
@@ -35,38 +38,32 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var category = await _categoryService.GetListCategory();
-            if (category.Count == 0)
-                return NotFound(SystemFunctions.GetAllError("categories"));
-            return Ok(category);
+            var result = await _categoryService.GetListCategory();
+            if (result.ResultObj.Count == 0)
+                return BadRequest(result.Message);
+            return Ok(result.ResultObj);
         }
 
         [HttpPost("/api/category/add")]
-        public async Task<IActionResult> AddCategory([FromForm] CategoryRequest request)
+        public async Task<IActionResult> AddCategory([FromBody] CategoryRequest request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var affectedResult = await _categoryService.Create(request);
-            if (affectedResult == ConstantStrings.TGBadRequest)
-                return BadRequest(ConstantStrings.emptyNameFieldError);
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _categoryService.Create(request);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
 
         [HttpPut("/api/category/update/{categoryId}")]
-        public async Task<IActionResult> UpdateCategory(int categoryId, [FromForm] CategoryRequest request)
+        public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CategoryRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _categoryService.Update(categoryId, request);
-            if (affectedResult == ConstantStrings.TGNotFound)
-                return NotFound(SystemFunctions.FindByIdError("categories", categoryId));
-            if (affectedResult == ConstantStrings.TGBadRequest)
-                return BadRequest(ConstantStrings.emptyNameFieldError);
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _categoryService.Update(categoryId, request);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
 
@@ -77,11 +74,9 @@ namespace TGPro.BackendAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var affectedResult = await _categoryService.Delete(categoryId);
-            if (affectedResult == ConstantStrings.TGNotFound)
-                return NotFound(SystemFunctions.FindByIdError("categories", categoryId));
-            if (affectedResult == 0)
-                return BadRequest(ConstantStrings.undefinedError);
+            var result = await _categoryService.Delete(categoryId);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
             return Ok();
         }
     }

@@ -1,6 +1,6 @@
-﻿namespace TGPro.Service.ViewModel.Conditions
+﻿namespace TGPro.Service.DTOs.Authentication
 {
-    public class ConditionRequest
+    public class RoleRequest
     {
         public string Name { get; set; }
         public string Description { get; set; }

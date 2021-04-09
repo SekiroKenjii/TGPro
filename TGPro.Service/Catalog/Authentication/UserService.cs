@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
-using TGPro.Service.ViewModel.Authentication;
+using TGPro.Service.DTOs.Authentication;
 using TGPro.Data.Entities;
 using System.Security.Claims;
 using System;
 using TGPro.Service.Common;
-using TGPro.Service.SystemResources;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using TGPro.Data.EF;
@@ -13,6 +12,7 @@ using Microsoft.Extensions.Options;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using TGPro.Data.Enums;
+using TGPro.Service.DTOs.Authentication.ViewModel;
 
 namespace TGPro.Service.Catalog.Authentication
 {
@@ -92,12 +92,21 @@ namespace TGPro.Service.Catalog.Authentication
             });
         }
 
-        public async Task<ApiResponse<IList<AppUser>>> GetUsers(string userRole)
+        public async Task<ApiResponse<List<UserViewModel>>> GetUsers(string userRole)
         {
+            List<UserViewModel> userVM = new List<UserViewModel>();
             var emp = await _userManager.GetUsersInRoleAsync(userRole);
             if (emp.Count == 0)
-                return new ApiErrorResponse<IList<AppUser>>(ConstantStrings.getAllError);
-            return new ApiSuccessResponse<IList<AppUser>>(emp);
+                return new ApiErrorResponse<List<UserViewModel>>(ConstantStrings.getAllError);
+            foreach(var e in emp)
+            {
+                var roles = await _userManager.GetRolesAsync(e);
+                userVM.Add( new UserViewModel {
+                    User = e,
+                    Roles = string.Join(", ", roles)
+                });
+            }
+            return new ApiSuccessResponse<List<UserViewModel>>(userVM);
         }
 
         public async Task<ApiResponse<List<AppRole>>> GetRoles()
@@ -113,7 +122,6 @@ namespace TGPro.Service.Catalog.Authentication
             throw new NotImplementedException();
         }
 
-        [Obsolete]
         public async Task<ApiResponse<string>> AddUser(string userRoleRequest, UserRequest request)
         {
             var user = new AppUser()
@@ -126,7 +134,7 @@ namespace TGPro.Service.Catalog.Authentication
                 Address = request.Address,
                 City = request.City,
                 Country = request.Country,
-                Sex = request.Sex
+                Gender = request.Gender
             };
             var uploadResult = new ImageUploadResult();
             if (request.ProfilePicture != null)
@@ -140,19 +148,19 @@ namespace TGPro.Service.Catalog.Authentication
                     };
                     uploadResult = _cloudinary.Upload(uploadParams);
                 }
-                user.ProfilePicture = uploadResult.Uri.ToString();
+                user.ProfilePicture = uploadResult.SecureUrl.ToString();
                 user.PublicId = uploadResult.PublicId;
             }
             else
             {
-                if (request.Sex == Sex.Male || request.Sex == Sex.Null) {
+                if (request.Gender == Gender.Male || request.Gender == Gender.Null) {
                     var uploadParams = new ImageUploadParams()
                     {
                         File = new FileDescription(ConstantStrings.USER_IMAGE_FOLDER + ConstantStrings.defaultMaleImage),
                         Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
                     };
                     uploadResult = _cloudinary.Upload(uploadParams);
-                    user.ProfilePicture = uploadResult.Uri.ToString();
+                    user.ProfilePicture = uploadResult.SecureUrl.ToString();
                     user.PublicId = uploadResult.PublicId;
                 }
                 else
@@ -163,7 +171,7 @@ namespace TGPro.Service.Catalog.Authentication
                         Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
                     };
                     uploadResult = _cloudinary.Upload(uploadParams);
-                    user.ProfilePicture = uploadResult.Uri.ToString();
+                    user.ProfilePicture = uploadResult.SecureUrl.ToString();
                     user.PublicId = uploadResult.PublicId;
                 }
                     
@@ -211,6 +219,76 @@ namespace TGPro.Service.Catalog.Authentication
                 return new ApiErrorResponse<string>(ConstantStrings.roleNotExisted);
             await _roleManager.DeleteAsync(role);
             return new ApiSuccessResponse<string>(ConstantStrings.deleteSuccessfully);
+        }
+
+        public async Task<ApiResponse<string>> UpdateUser(Guid userId, UserRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var currentRole = await _userManager.GetRolesAsync(user);
+            if (user == null)
+                return new ApiErrorResponse<string>(ConstantStrings.userNotExist);
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.Email = request.Email;
+            if (!string.IsNullOrEmpty(request.CurrentPassword) && !string.IsNullOrEmpty(request.Password))
+            {
+                var passwordChanged = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.Password);
+                if (!passwordChanged.Succeeded)
+                {
+                    foreach(var error in passwordChanged.Errors)
+                    {
+                        if (error.Code.Contains("Mismatch"))
+                        {
+                            return new ApiErrorResponse<string>(passwordChanged.Errors.ToString());
+                        }
+                        return new ApiErrorResponse<string>(error.Description);
+                    }
+                    
+                }
+            }
+            user.PhoneNumber = request.PhoneNumber;
+            user.Address = request.Address;
+            user.City = request.City;
+            user.Country = request.Country;
+            user.Gender = request.Gender;
+            if (!string.IsNullOrEmpty(request.SubRole))
+            {
+                for (var i = 1; i< currentRole.Count; i++)
+                {
+                    await _userManager.RemoveFromRoleAsync(user, currentRole[i]);
+                    await _userManager.AddToRoleAsync(user, request.SubRole);
+                }
+            }
+            if(request.ProfilePicture != null)
+            {
+                var delResult = DeleteUserImage(user.PublicId);
+                if (delResult != "ok")
+                    return new ApiErrorResponse<string>(ConstantStrings.cloudDeleteFailed);
+                using (var stream = request.ProfilePicture.OpenReadStream())
+                {
+                    var uploadResult = new ImageUploadResult();
+                    var uploadParams = new ImageUploadParams()
+                    {
+                        File = new FileDescription(request.ProfilePicture.Name, stream),
+                        Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
+                    };
+                    uploadResult = _cloudinary.Upload(uploadParams);
+                    user.ProfilePicture = uploadResult.SecureUrl.ToString();
+                    user.PublicId = uploadResult.PublicId;
+                }
+            }
+            await _userManager.UpdateAsync(user);
+            return new ApiSuccessResponse<string>(ConstantStrings.editSuccessfully);
+        }
+
+        private string DeleteUserImage(string publicID)
+        {
+            var deletionParams = new DeletionParams(publicID)
+            {
+                ResourceType = ResourceType.Image
+            };
+            var deletionResult = _cloudinary.Destroy(deletionParams);
+            return deletionResult.Result;
         }
     }
 }

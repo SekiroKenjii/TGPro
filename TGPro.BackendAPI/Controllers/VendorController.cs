@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Vendors;
-using TGPro.Service.SystemResources;
-using TGPro.Service.ViewModel.Vendors;
+using TGPro.Service.Common;
+using TGPro.Service.DTOs.Vendors;
 
 namespace TGPro.BackendAPI.Controllers
 {

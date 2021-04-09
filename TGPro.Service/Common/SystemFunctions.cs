@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace TGPro.Service.SystemResources
+namespace TGPro.Service.Common
 {
     public class SystemFunctions
     {

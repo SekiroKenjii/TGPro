@@ -1,6 +1,6 @@
 ﻿using TGPro.Data.Enums;
 
-namespace TGPro.Service.ViewModel.Vendors
+namespace TGPro.Service.DTOs.Vendors
 {
     public class VendorRequest
     {

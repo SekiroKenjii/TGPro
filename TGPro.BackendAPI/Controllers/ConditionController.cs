@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Conditions;
-using TGPro.Service.SystemResources;
-using TGPro.Service.ViewModel.Conditions;
+using TGPro.Service.Common;
+using TGPro.Service.DTOs.Conditions;
 
 namespace TGPro.BackendAPI.Controllers
 {

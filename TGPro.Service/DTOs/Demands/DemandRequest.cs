@@ -1,4 +1,4 @@
-﻿namespace TGPro.Service.ViewModel.Demands
+﻿namespace TGPro.Service.DTOs.Demands
 {
     public class DemandRequest
     {

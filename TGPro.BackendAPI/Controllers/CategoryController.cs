@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TGPro.Service.Catalog.Categories;
-using TGPro.Service.SystemResources;
-using TGPro.Service.ViewModel.Categories;
+using TGPro.Service.Common;
+using TGPro.Service.DTOs.Categories;
 
 namespace TGPro.BackendAPI.Controllers
 {

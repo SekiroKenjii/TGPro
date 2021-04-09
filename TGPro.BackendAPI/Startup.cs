@@ -1,119 +1,51 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
-using TGPro.Data.EF;
-using TGPro.Data.Entities;
-using TGPro.Service.Catalog.Authentication;
-using TGPro.Service.Catalog.Categories;
-using TGPro.Service.Catalog.Conditions;
-using TGPro.Service.Catalog.Demands;
-using TGPro.Service.Catalog.Trademarks;
-using TGPro.Service.Catalog.Vendors;
+using TGPro.Service.Extensions;
 using TGPro.Service.Common;
-using TGPro.Service.SystemResources;
 
 namespace TGPro.BackendAPI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IConfiguration _config;
+        public Startup(IConfiguration config)
         {
-            Configuration = configuration;
+            _config = config;
         }
-
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //add CORS
-            services.AddCors(c =>
-            {
-                c.AddPolicy(ConstantStrings.AllowOrigin, options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-            });
-
-            services.AddIdentity<AppUser, AppRole>()
-                .AddEntityFrameworkStores<TGProDbContext>()
-                .AddDefaultTokenProviders();
-
-            //DB connection
-            services.AddDbContext<TGProDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(ConstantStrings.DbConnectionString)));
-
-            //declare DI
-            services.AddTransient<IStorageService, FileStorageService>();
-            services.AddTransient<ICategoryService, CategoryService>();
-            services.AddTransient<IConditionService, ConditionService>();
-            services.AddTransient<IDemandService, DemandService>();
-            services.AddTransient<ITrademarkService, TrademarkService>();
-            services.AddTransient<IVendorService, VendorService>();
-            services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();
-            services.AddTransient<SignInManager<AppUser>, SignInManager<AppUser>>();
-            services.AddTransient<RoleManager<AppRole>, RoleManager<AppRole>>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ITokenService, TokenService>();
-
-            //JWT
-            services.AddAuthentication(opt =>
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-
-                        ValidIssuer = Configuration["Tokens:Issuer"],
-                        ValidAudience = Configuration["Tokens:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
-                    };
-                });
-
-            //Cloudinary
-            services.Configure<CloudinarySettings>(Configuration.GetSection(ConstantStrings.CloudinarySetting));
-
+            services.AddApplicationServices(_config);
+            services.AddCors();
+            services.AddIdentityServices(_config);
             services.AddControllers();
-
-            //add Swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(ConstantStrings.OpenApiVersion, new OpenApiInfo
+                c.SwaggerDoc(_config["Swagger:OpenApiVersion"], new OpenApiInfo
                 { 
-                    Title = ConstantStrings.OpenApiTitle, Version = ConstantStrings.OpenApiVersion
+                    Title = _config["Swagger:OpenApiTitle"], Version = _config["Swagger:OpenApiVersion"]
                 });
             });
-
-            services.AddControllersWithViews().AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint(ConstantStrings.SwaggerUrl, ConstantStrings.SwaggerName));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint(_config["Swagger:SwaggerUrl"], _config["Swagger:OpenApiTitle"]));
             }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(options => options.AllowAnyMethod().AllowAnyHeader().WithOrigins(ConstantStrings.ManagementUrl));
 
             app.UseAuthentication();
 

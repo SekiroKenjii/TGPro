@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net5.0</TargetFramework>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -10,6 +10,8 @@
 
 	<ItemGroup>
 	  <PackageReference Include="CloudinaryDotNet" Version="1.14.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.5" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.5" />
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.9.0" />
 	</ItemGroup>
 

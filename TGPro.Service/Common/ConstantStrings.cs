@@ -1,25 +1,16 @@
-﻿namespace TGPro.Service.SystemResources
+﻿namespace TGPro.Service.Common
 {
     public class ConstantStrings
     {
         public const string DbConnectionString = "TGProDb";
         public const string CloudinarySetting = "CloudinarySettings";
 
-        public const string SwaggerUrl = "/swagger/v1/swagger.json";
-        public const string SwaggerName = "TGPro.BackendAPI v1";
-        public const string OpenApiTitle = "TGPro.BackendAPI";
-        public const string OpenApiVersion = "v1";
-
         public const string AllowOrigin = "AllowOrigin";
-        public const string ManagementPageUrl = "https://localhost:4200";
+        public const string ManagementUrl = "https://localhost:4200";
 
-        public static string _productFolder;
-        public static string _trademarkFolder;
-        public static string _userFolder;
-
-        public const string PRODUCT_IMAGE_FOLDER = @"contents\images\product\";
+        public const string PRODUCT_IMAGE_FOLDER = @"wwwroot\contents\images\product\";
         public const string TRADEMARK_IMAGE_FOLDER = @"wwwroot\contents\images\trademark\";
-        public const string USER_IMAGE_FOLDER = @"contents\images\user\";
+        public const string USER_IMAGE_FOLDER = @"wwwroot\contents\images\user\";
 
         public const string defaultProductImage = "default_product_image.jpg";
         public const string defaultTrademarkImage = "default_trademark_image.jpg";
@@ -46,6 +37,7 @@
         public const string deleteUnuccessfully = "Xoá không thành công!";
         public const string userInfoIncorrect = "Tài khoản hoặc mật khẩu không đúng!";
         public const string userNotExist = "Tài khoản không tồn tại!";
+        public const string confirmPasswordError = "Mật khẩu cũ không đúng!";
         public const string cloudDeleteFailed = "Lỗi xoá ảnh trên đám mây!";
         public const string getAllError = "Không có dữ liệu nào được tìm thấy!";
 

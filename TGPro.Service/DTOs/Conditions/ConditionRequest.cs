@@ -1,6 +1,6 @@
-﻿namespace TGPro.Service.ViewModel.Categories
+﻿namespace TGPro.Service.DTOs.Conditions
 {
-    public class CategoryRequest
+    public class ConditionRequest
     {
         public string Name { get; set; }
         public string Description { get; set; }

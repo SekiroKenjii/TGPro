@@ -46,6 +46,19 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(result.ResultObj);
         }
 
+        [HttpGet("/api/product/details/all")]
+        public async Task<IActionResult> GetAllProductDetails()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _productService.GetAllProductDetails();
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok(result.ResultObj);
+        }
+
         [HttpPost("/api/product/add")]
         public async Task<IActionResult> Create([FromBody] ProductRequest request)
         {

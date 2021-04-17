@@ -8,9 +8,12 @@ using TGPro.Service.Catalog.Authentication;
 using TGPro.Service.Catalog.Categories;
 using TGPro.Service.Catalog.Conditions;
 using TGPro.Service.Catalog.Demands;
+using TGPro.Service.Catalog.ProductImages;
+using TGPro.Service.Catalog.Products;
 using TGPro.Service.Catalog.Trademarks;
 using TGPro.Service.Catalog.Vendors;
 using TGPro.Service.Common;
+using TGPro.Service.Helpers;
 
 namespace TGPro.Service.Extensions
 {
@@ -31,6 +34,11 @@ namespace TGPro.Service.Extensions
             services.AddTransient<RoleManager<AppRole>, RoleManager<AppRole>>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IProductImageService, ProductImageService>();
+
+            services.AddAutoMapper(typeof(AutoMapperProducts).Assembly);
+            services.AddAutoMapper(typeof(AutoMapperVendors).Assembly);
 
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore

@@ -9,7 +9,7 @@ using TGPro.Service.DTOs.Authentication;
 namespace TGPro.BackendAPI.Controllers
 {
     [ApiController]
-    public class UsersController : Controller
+    public class UsersController : BaseApiController
     {
         private readonly IUserService _userService;
 
@@ -90,7 +90,7 @@ namespace TGPro.BackendAPI.Controllers
             return Ok(result.ResultObj);
         }
 
-        [Authorize(Roles = ConstantStrings.AdminRole)]
+        //[Authorize(Roles = ConstantStrings.AdminRole)]
         [HttpPost("/api/user/add/{userRoleRequest}")]
         public async Task<IActionResult> CreateUser(string userRoleRequest,[FromForm] UserRequest request)
         {
@@ -109,6 +109,30 @@ namespace TGPro.BackendAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             var result = await _userService.UpdateUser(userId, request);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok();
+        }
+
+        [Authorize(Roles = ConstantStrings.AdminRole)]
+        [HttpPut("/api/user/lock/{userId}")]
+        public async Task<IActionResult> LockUser(Guid userId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var result = await _userService.LockUser(userId);
+            if (!result.IsSuccessed)
+                return BadRequest(result.Message);
+            return Ok();
+        }
+
+        [Authorize(Roles = ConstantStrings.AdminRole)]
+        [HttpPut("/api/user/unlock/{userId}")]
+        public async Task<IActionResult> UnlockUser(Guid userId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var result = await _userService.UnlockUser(userId);
             if (!result.IsSuccessed)
                 return BadRequest(result.Message);
             return Ok();

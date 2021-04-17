@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using TGPro.Data.Enums;
 
 namespace TGPro.Service.DTOs.Authentication
@@ -16,6 +17,8 @@ namespace TGPro.Service.DTOs.Authentication
         public string City { get; set; }
         public string Country { get; set; }
         public string SubRole { get; set; }
+        public DateTime LockoutEnd { get; set; }
+        public bool LockoutEnabled { get; set; }
         public IFormFile ProfilePicture { get; set; }
         public Gender Gender { get; set; }
     }

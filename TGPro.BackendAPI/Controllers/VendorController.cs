@@ -7,10 +7,9 @@ using TGPro.Service.DTOs.Vendors;
 
 namespace TGPro.BackendAPI.Controllers
 {
-    //[Route("/api/vendor")]
     [Authorize(Roles = ConstantStrings.AdminRole)]
     [ApiController]
-    public class VendorController : Controller
+    public class VendorController : BaseApiController
     {
         private readonly IVendorService _vendorService;
         public VendorController(IVendorService vendorService)

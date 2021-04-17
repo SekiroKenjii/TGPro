@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,27 +12,18 @@ namespace TGPro.Service.Catalog.Vendors
 {
     public class VendorService : IVendorService
     {
-        private TGProDbContext _db;
-        public VendorService(TGProDbContext db)
+        private readonly TGProDbContext _db;
+        private readonly IMapper _mapper;
+        public VendorService(TGProDbContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
         public async Task<ApiResponse<string>> Create(VendorRequest request)
         {
             if (string.IsNullOrEmpty(request.Name))
                 return new ApiErrorResponse<string>(ConstantStrings.emptyNameFieldError);
-            var vendor = new Vendor()
-            {
-                Name = request.Name,
-                ContactName = request.ContactName,
-                ContactTitle = request.ContactTitle,
-                Address = request.Address,
-                City = request.City,
-                Country = request.Country,
-                PhoneNumber = request.PhoneNumber,
-                HomePage = request.HomePage,
-                Status = request.Status
-            };
+            var vendor = _mapper.Map<Vendor>(request);
             _db.Vendors.Add(vendor);
             await _db.SaveChangesAsync();
             return new ApiSuccessResponse<string>(ConstantStrings.addSuccessfully);
@@ -69,15 +61,7 @@ namespace TGPro.Service.Catalog.Vendors
                 return new ApiErrorResponse<string>(ConstantStrings.FindByIdError(vendorId));
             if (string.IsNullOrEmpty(request.Name))
                 return new ApiErrorResponse<string>(ConstantStrings.emptyNameFieldError);
-            vendorFromDb.Name = request.Name;
-            vendorFromDb.ContactName = request.ContactName;
-            vendorFromDb.ContactTitle = request.ContactTitle;
-            vendorFromDb.Address = request.Address;
-            vendorFromDb.City = request.City;
-            vendorFromDb.Country = request.Country;
-            vendorFromDb.PhoneNumber = request.PhoneNumber;
-            vendorFromDb.HomePage = request.HomePage;
-            vendorFromDb.Status = request.Status;
+            vendorFromDb = _mapper.Map<Vendor>(request);
             _db.Vendors.Update(vendorFromDb);
             await _db.SaveChangesAsync();
             return new ApiSuccessResponse<string>(ConstantStrings.editSuccessfully);

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -9,9 +8,8 @@ using TGPro.Service.DTOs.Authentication;
 
 namespace TGPro.BackendAPI.Controllers
 {
-    //[Route("api/[controller]")]
     [ApiController]
-    public class TokenController : ControllerBase
+    public class TokenController : BaseApiController
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;

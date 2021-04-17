@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TGPro.Data.EF;
 
 namespace TGPro.Data.Migrations
 {
     [DbContext(typeof(TGProDbContext))]
-    partial class TGProDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210412103827_AddProductToDatabase")]
+    partial class AddProductToDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,7 +151,7 @@ namespace TGPro.Data.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "db6838b2-e2b8-48d2-a84c-5a52db846ab7",
+                            ConcurrencyStamp = "66091517-1343-44e5-a71e-af9fdeae5643",
                             Description = "Application administrator role",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
@@ -252,7 +254,7 @@ namespace TGPro.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "KTX Khu B, Đại Học Quốc Gia TPHCM",
                             City = "Thành phố Hồ Chí Minh",
-                            ConcurrencyStamp = "97e2cb3b-b13b-4137-8617-ae48d4bd02b8",
+                            ConcurrencyStamp = "c55729b8-a2f4-424a-ac16-dc4fd609cb56",
                             Country = "Việt Nam",
                             Email = "trungthuongvo109@gmail.com",
                             EmailConfirmed = true,
@@ -262,7 +264,7 @@ namespace TGPro.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "trungthuongvo109@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAENmRSEjQ88pk3gOnbwKRmiSS6hTU1qwPe++yzLPXV7UJyUsp/gBeWT49n+q/Y8DvQg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEC9ogXL9egStjcHzNbkh54ZxvS8xq1goo1ceK2/9O03j7rvYLtEbt1A8UZgL+wE0vQ==",
                             PhoneNumber = "0375274267",
                             PhoneNumberConfirmed = true,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -423,43 +425,6 @@ namespace TGPro.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("TGPro.Data.Entities.ProductImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Caption")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDefault")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PublicId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductImages");
-                });
-
             modelBuilder.Entity("TGPro.Data.Entities.Trademark", b =>
                 {
                     b.Property<int>("Id")
@@ -585,17 +550,6 @@ namespace TGPro.Data.Migrations
                     b.Navigation("Vendor");
                 });
 
-            modelBuilder.Entity("TGPro.Data.Entities.ProductImage", b =>
-                {
-                    b.HasOne("TGPro.Data.Entities.Product", "Product")
-                        .WithMany("ProductImages")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("TGPro.Data.Entities.Category", b =>
                 {
                     b.Navigation("Products");
@@ -609,11 +563,6 @@ namespace TGPro.Data.Migrations
             modelBuilder.Entity("TGPro.Data.Entities.Demand", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("TGPro.Data.Entities.Product", b =>
-                {
-                    b.Navigation("ProductImages");
                 });
 
             modelBuilder.Entity("TGPro.Data.Entities.Trademark", b =>

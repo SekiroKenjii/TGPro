@@ -7,10 +7,9 @@ using TGPro.Service.DTOs.Demands;
 
 namespace TGPro.BackendAPI.Controllers
 {
-    //[Route("/api/demand")]
     [Authorize(Roles = ConstantStrings.AdminRole)]
     [ApiController]
-    public class DemandController : Controller
+    public class DemandController : BaseApiController
     {
         private readonly IDemandService _demandService;
         public DemandController(IDemandService demandService)

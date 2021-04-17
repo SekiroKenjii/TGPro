@@ -13,6 +13,8 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using TGPro.Data.Enums;
 using TGPro.Service.DTOs.Authentication.ViewModel;
+using Microsoft.AspNetCore.Http;
+using AutoMapper;
 
 namespace TGPro.Service.Catalog.Authentication
 {
@@ -23,24 +25,24 @@ namespace TGPro.Service.Catalog.Authentication
         private readonly RoleManager<AppRole> _roleManager;
         private readonly ITokenService _tokenService;
         private readonly TGProDbContext _db;
-        private readonly IOptions<CloudinarySettings> _cloudinaryConfig;
+        private readonly IMapper _mapper;
         private readonly Cloudinary _cloudinary;
 
         public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-                            RoleManager<AppRole> roleManager, ITokenService tokenService, TGProDbContext db,
-                            IOptions<CloudinarySettings> cloudinaryConfig)
+                            RoleManager<AppRole> roleManager, ITokenService tokenService,
+                            TGProDbContext db, IOptions<CloudinarySettings> config, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _tokenService = tokenService;
             _db = db;
-            _cloudinaryConfig = cloudinaryConfig;
+            _mapper = mapper;
 
-            Account account = new Account(
-                _cloudinaryConfig.Value.CloudName,
-                _cloudinaryConfig.Value.ApiKey,
-                _cloudinaryConfig.Value.ApiSecret
+            var account = new Account(
+                config.Value.CloudName,
+                config.Value.ApiKey,
+                config.Value.ApiSecret
             );
 
             _cloudinary = new Cloudinary(account);
@@ -124,60 +126,32 @@ namespace TGPro.Service.Catalog.Authentication
 
         public async Task<ApiResponse<string>> AddUser(string userRoleRequest, UserRequest request)
         {
-            var user = new AppUser()
-            {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Email = request.Email,
-                UserName = request.UserName,
-                PhoneNumber = request.PhoneNumber,
-                Address = request.Address,
-                City = request.City,
-                Country = request.Country,
-                Gender = request.Gender
-            };
-            var uploadResult = new ImageUploadResult();
+            var user = _mapper.Map<AppUser>(request);
+            user.LockoutEnd = DateTime.Now;
+            user.LockoutEnabled = false;
             if (request.ProfilePicture != null)
             {
-                using (var stream = request.ProfilePicture.OpenReadStream())
-                {
-                    var uploadParams = new ImageUploadParams()
-                    {
-                        File = new FileDescription(request.ProfilePicture.Name, stream),
-                        Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
-                    };
-                    uploadResult = _cloudinary.Upload(uploadParams);
-                }
-                user.ProfilePicture = uploadResult.SecureUrl.ToString();
-                user.PublicId = uploadResult.PublicId;
+                var result = await UploadImage(request.ProfilePicture, null);
+                user.ProfilePicture = result.SecureUrl.ToString();
+                user.PublicId = result.PublicId;
             }
             else
             {
-                if (request.Gender == Gender.Male || request.Gender == Gender.Null) {
-                    var uploadParams = new ImageUploadParams()
-                    {
-                        File = new FileDescription(ConstantStrings.USER_IMAGE_FOLDER + ConstantStrings.defaultMaleImage),
-                        Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
-                    };
-                    uploadResult = _cloudinary.Upload(uploadParams);
-                    user.ProfilePicture = uploadResult.SecureUrl.ToString();
-                    user.PublicId = uploadResult.PublicId;
+                if (request.Gender == Gender.Female) {
+                    var result = await UploadImage(request.ProfilePicture, request.Gender);
+                    user.ProfilePicture = result.SecureUrl.ToString();
+                    user.PublicId = result.PublicId;
                 }
                 else
                 {
-                    var uploadParams = new ImageUploadParams()
-                    {
-                        File = new FileDescription(ConstantStrings.USER_IMAGE_FOLDER + ConstantStrings.defaultFemaleImage),
-                        Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
-                    };
-                    uploadResult = _cloudinary.Upload(uploadParams);
-                    user.ProfilePicture = uploadResult.SecureUrl.ToString();
-                    user.PublicId = uploadResult.PublicId;
+                    var result = await UploadImage(request.ProfilePicture, request.Gender);
+                    user.ProfilePicture = result.SecureUrl.ToString();
+                    user.PublicId = result.PublicId;
                 }
                     
             }
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (result.Succeeded)
+            var createResult = await _userManager.CreateAsync(user, request.Password);
+            if (createResult.Succeeded)
             {
                 if (userRoleRequest.ToLower() == ConstantStrings.AdminRole.ToLower())
                 {
@@ -243,7 +217,6 @@ namespace TGPro.Service.Catalog.Authentication
                         }
                         return new ApiErrorResponse<string>(error.Description);
                     }
-                    
                 }
             }
             user.PhoneNumber = request.PhoneNumber;
@@ -259,36 +232,83 @@ namespace TGPro.Service.Catalog.Authentication
                     await _userManager.AddToRoleAsync(user, request.SubRole);
                 }
             }
-            if(request.ProfilePicture != null)
+            if (request.ProfilePicture != null)
             {
-                var delResult = DeleteUserImage(user.PublicId);
-                if (delResult != "ok")
+                var delResult = await DeleteImage(user.PublicId);
+                if (delResult.Error  != null)
                     return new ApiErrorResponse<string>(ConstantStrings.cloudDeleteFailed);
-                using (var stream = request.ProfilePicture.OpenReadStream())
-                {
-                    var uploadResult = new ImageUploadResult();
-                    var uploadParams = new ImageUploadParams()
-                    {
-                        File = new FileDescription(request.ProfilePicture.Name, stream),
-                        Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
-                    };
-                    uploadResult = _cloudinary.Upload(uploadParams);
-                    user.ProfilePicture = uploadResult.SecureUrl.ToString();
-                    user.PublicId = uploadResult.PublicId;
-                }
+                var result = await UploadImage(request.ProfilePicture, null);
+                user.ProfilePicture = result.SecureUrl.ToString();
+                user.PublicId = result.PublicId;
             }
             await _userManager.UpdateAsync(user);
             return new ApiSuccessResponse<string>(ConstantStrings.editSuccessfully);
         }
 
-        private string DeleteUserImage(string publicID)
+        public async Task<ApiResponse<string>> LockUser(Guid userId)
         {
-            var deletionParams = new DeletionParams(publicID)
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return new ApiErrorResponse<string>(ConstantStrings.userNotExist);
+            user.LockoutEnd = DateTime.Now.AddYears(1000);
+            user.LockoutEnabled = true;
+            await _userManager.UpdateAsync(user);
+            return new ApiSuccessResponse<string>(ConstantStrings.lockSuccessfully);
+        }
+
+        public async Task<ApiResponse<string>> UnlockUser(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return new ApiErrorResponse<string>(ConstantStrings.userNotExist);
+            user.LockoutEnd = DateTime.Now;
+            user.LockoutEnabled = false;
+            await _userManager.UpdateAsync(user);
+            return new ApiSuccessResponse<string>(ConstantStrings.unlockSuccessfully);
+        }
+
+        private async Task<ImageUploadResult> UploadImage(IFormFile file, Gender? gender)
+        {
+            var uploadResult = new ImageUploadResult();
+            if(gender == null)
             {
-                ResourceType = ResourceType.Image
-            };
-            var deletionResult = _cloudinary.Destroy(deletionParams);
-            return deletionResult.Result;
+                using var stream = file.OpenReadStream();
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(file.Name, stream),
+                    Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
+                };
+                uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            }
+            else
+            {
+                if(gender == Gender.Female)
+                {
+                    var uploadParams = new ImageUploadParams()
+                    {
+                        File = new FileDescription(ConstantStrings.USER_IMAGE_FOLDER + ConstantStrings.defaultFemaleImage),
+                        Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
+                    };
+                    uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                }
+                else
+                {
+                    var uploadParams = new ImageUploadParams()
+                    {
+                        File = new FileDescription(ConstantStrings.USER_IMAGE_FOLDER + ConstantStrings.defaultMaleImage),
+                        Folder = ConstantStrings.CL_USER_IMAGE_FOLDER
+                    };
+                    uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                }
+            }
+            return uploadResult;
+        }
+
+        private async Task<DeletionResult> DeleteImage(string publicID)
+        {
+            var deletionParams = new DeletionParams(publicID);
+            var deletionResult = await _cloudinary.DestroyAsync(deletionParams);
+            return deletionResult;
         }
     }
 }

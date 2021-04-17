@@ -10,7 +10,7 @@ namespace TGPro.BackendAPI.Controllers
     //[Route("/api/trademark")]
     [Authorize(Roles = ConstantStrings.AdminRole)]
     [ApiController]
-    public class TrademarkController : Controller
+    public class TrademarkController : BaseApiController
     {
         private readonly ITrademarkService _trademarkService;
         public TrademarkController(ITrademarkService trademarkService)

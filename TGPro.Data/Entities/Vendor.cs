@@ -15,5 +15,7 @@ namespace TGPro.Data.Entities
         public string PhoneNumber { get; set; }
         public string HomePage { get; set; }
         public Status Status { get; set; }
+
+        public List<Product> Products { get; set; }
     }
 }

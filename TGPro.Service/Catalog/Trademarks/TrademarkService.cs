@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
@@ -15,18 +16,16 @@ namespace TGPro.Service.Catalog.Trademarks
     public class TrademarkService : ITrademarkService
     {
         private readonly TGProDbContext _db;
-        private readonly IOptions<CloudinarySettings> _cloudinaryConfig;
         private readonly Cloudinary _cloudinary;
 
-        public TrademarkService(TGProDbContext db, IOptions<CloudinarySettings> cloudinaryConfig)
+        public TrademarkService(TGProDbContext db, IOptions<CloudinarySettings> config)
         {
             _db = db;
-            _cloudinaryConfig = cloudinaryConfig;
 
-            Account account = new Account(
-                _cloudinaryConfig.Value.CloudName,
-                _cloudinaryConfig.Value.ApiKey,
-                _cloudinaryConfig.Value.ApiSecret
+            var account = new Account(
+                config.Value.CloudName,
+                config.Value.ApiKey,
+                config.Value.ApiSecret
             );
 
             _cloudinary = new Cloudinary(account);
@@ -42,32 +41,9 @@ namespace TGPro.Service.Catalog.Trademarks
                 Status = request.Status,
                 Description = request.Description
             };
-            var uploadResult = new ImageUploadResult();
-            if (request.Image != null)
-            {
-                using (var stream = request.Image.OpenReadStream())
-                {
-                    var uploadParams = new ImageUploadParams()
-                    {
-                        File = new FileDescription(request.Image.Name, stream),
-                        Folder = ConstantStrings.CL_TRADEMARK_IMAGE_FOLDER
-                    };
-                    uploadResult = _cloudinary.Upload(uploadParams);
-                }
-                trademark.Image = uploadResult.SecureUrl.ToString();
-                trademark.PublicId = uploadResult.PublicId;
-            }
-            else
-            {
-                var uploadParams = new ImageUploadParams()
-                {
-                    File = new FileDescription(ConstantStrings.TRADEMARK_IMAGE_FOLDER + ConstantStrings.defaultTrademarkImage),
-                    Folder = ConstantStrings.CL_TRADEMARK_IMAGE_FOLDER
-                };
-                uploadResult = _cloudinary.Upload(uploadParams);
-                trademark.Image = uploadResult.SecureUrl.ToString();
-                trademark.PublicId = uploadResult.PublicId;
-            }
+            var uploadResult = await UploadImage(request.Image);
+            trademark.Image = uploadResult.SecureUrl.ToString();
+            trademark.PublicId = uploadResult.PublicId;
             _db.Trademarks.Add(trademark);
             await _db.SaveChangesAsync();
             return new ApiSuccessResponse<string>(ConstantStrings.addSuccessfully);
@@ -78,8 +54,8 @@ namespace TGPro.Service.Catalog.Trademarks
             var trademarkFromDb = await _db.Trademarks.FindAsync(trademarkId);
             if (trademarkFromDb == null)
                 return new ApiErrorResponse<string>(ConstantStrings.FindByIdError(trademarkId));
-            var delResult = DeleteTMImage(trademarkFromDb.PublicId);
-            if (delResult != "ok")
+            var result = await DeleteImage(trademarkFromDb.PublicId);
+            if (result.Error != null)
                 return new ApiErrorResponse<string>(ConstantStrings.cloudDeleteFailed);
             _db.Trademarks.Remove(trademarkFromDb);
             await _db.SaveChangesAsync();
@@ -114,34 +90,47 @@ namespace TGPro.Service.Catalog.Trademarks
             trademarkFromDb.Description = request.Description;
             if (request.Image != null)
             {
-                var delResult = DeleteTMImage(trademarkFromDb.PublicId);
-                if (delResult != "ok")
+                var result = await DeleteImage(trademarkFromDb.PublicId);
+                if (result.Error != null)
                     return new ApiErrorResponse<string>(ConstantStrings.cloudDeleteFailed);
-                using (var stream = request.Image.OpenReadStream())
-                {
-                    var uploadResult = new ImageUploadResult();
-                    var uploadParams = new ImageUploadParams()
-                    {
-                        File = new FileDescription(request.Image.Name, stream),
-                        Folder = ConstantStrings.CL_TRADEMARK_IMAGE_FOLDER
-                    };
-                    uploadResult = _cloudinary.Upload(uploadParams);
-                    trademarkFromDb.Image = uploadResult.SecureUrl.ToString();
-                    trademarkFromDb.PublicId = uploadResult.PublicId;
-                }
+                var uploadResult = await UploadImage(request.Image);
+                trademarkFromDb.Image = uploadResult.SecureUrl.ToString();
+                trademarkFromDb.PublicId = uploadResult.PublicId;
             }
             await _db.SaveChangesAsync();
             return new ApiSuccessResponse<string>(ConstantStrings.editSuccessfully);
         }
 
-        private string DeleteTMImage(string publicID)
+        private async Task<ImageUploadResult> UploadImage(IFormFile file)
         {
-            var deletionParams = new DeletionParams(publicID)
+            var uploadResult = new ImageUploadResult();
+            if(file != null)
             {
-                ResourceType = ResourceType.Image
-            };
-            var deletionResult = _cloudinary.Destroy(deletionParams);
-            return deletionResult.Result;
+                using var stream = file.OpenReadStream();
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(file.Name, stream),
+                    Folder = ConstantStrings.CL_TRADEMARK_IMAGE_FOLDER
+                };
+                uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            }
+            else
+            {
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(ConstantStrings.TRADEMARK_IMAGE_FOLDER + ConstantStrings.defaultTrademarkImage),
+                    Folder = ConstantStrings.CL_TRADEMARK_IMAGE_FOLDER
+                };
+                uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            }
+            return uploadResult;
+        }
+
+        private async Task<DeletionResult> DeleteImage(string publicID)
+        {
+            var deletionParams = new DeletionParams(publicID);
+            var deletionResult = await _cloudinary.DestroyAsync(deletionParams);
+            return deletionResult;
         }
     }
 }

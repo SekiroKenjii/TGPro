@@ -24,6 +24,8 @@ namespace TGPro.Data.EF
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             modelBuilder.ApplyConfiguration(new DemandConfiguration());
             modelBuilder.ApplyConfiguration(new TrademarkConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
             //Identity
             modelBuilder.Entity<IdentityUserClaim<Guid>>().ToTable("AppUserClaims");
             modelBuilder.Entity<IdentityUserRole<Guid>>().ToTable("AppUserRoles").HasKey(x => new { x.UserId, x.RoleId });
@@ -39,6 +41,8 @@ namespace TGPro.Data.EF
         public DbSet<Condition> Conditions { get; set; }
         public DbSet<Demand> Demands { get; set; }
         public DbSet<Trademark> Trademarks { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<AppRole> AppRoles { get; set; }
     }
 }

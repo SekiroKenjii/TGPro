@@ -22,5 +22,7 @@ namespace TGPro.Service.Catalog.Authentication
         Task<ApiResponse<List<UserViewModel>>> GetUsers(string userRoleRequest);
         Task<ApiResponse<string>> AddUser(string userRoleRequest, UserRequest request);
         Task<ApiResponse<string>> UpdateUser(Guid userId, UserRequest request);
+        Task<ApiResponse<string>> LockUser(Guid userId);
+        Task<ApiResponse<string>> UnlockUser(Guid userId);
     }
 }

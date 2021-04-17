@@ -7,10 +7,9 @@ using TGPro.Service.DTOs.Conditions;
 
 namespace TGPro.BackendAPI.Controllers
 {
-    //[Route("/api/condition")]
     [Authorize(Roles = ConstantStrings.AdminRole)]
     [ApiController]
-    public class ConditionController : Controller
+    public class ConditionController : BaseApiController
     {
         private readonly IConditionService _conditionService;
         public ConditionController(IConditionService conditionService)

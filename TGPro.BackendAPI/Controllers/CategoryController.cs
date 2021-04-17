@@ -7,10 +7,9 @@ using TGPro.Service.DTOs.Categories;
 
 namespace TGPro.BackendAPI.Controllers
 {
-    //[Route("/api/category")]
     [Authorize(Roles = ConstantStrings.AdminRole)]
     [ApiController]
-    public class CategoryController : Controller
+    public class CategoryController : BaseApiController
     {
         private readonly ICategoryService _categoryService;
         public CategoryController(ICategoryService categoryService)

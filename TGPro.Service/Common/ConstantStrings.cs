@@ -19,6 +19,7 @@
 
         public const string CL_TRADEMARK_IMAGE_FOLDER = "upload/img/trademark/";
         public const string CL_USER_IMAGE_FOLDER = "upload/img/user/";
+        public const string CL_PRODUCT_IMAGE_FOLDER = "upload/img/product/";
 
         public const string AdminRole = "Admin";
         public const string EmployeeRole = "Employee";
@@ -40,11 +41,15 @@
         public const string confirmPasswordError = "Mật khẩu cũ không đúng!";
         public const string cloudDeleteFailed = "Lỗi xoá ảnh trên đám mây!";
         public const string getAllError = "Không có dữ liệu nào được tìm thấy!";
+        public const string lockSuccessfully = "Khoá tài khoản thành công!";
+        public const string unlockSuccessfully = "Mở khoá tài khoản thành công!";
 
         public const string createConnectionError = "Không thể kết nối tới server!";
 
         public const string roleExisted = "Quyền này đã tồn tại!";
         public const string roleNotExisted = "Quyền này không tồn tại!";
+
+        public const string imgIsEmptyOrNull = "Chưa có ảnh nào được chọn!";
 
         public static string FindByIdError(int id)
         {

@@ -29,7 +29,7 @@ namespace TGPro.Data.Configurations
             builder.Property(x => x.Price).IsRequired().HasDefaultValue(0.0);
             builder.Property(x => x.UnitsInStock).IsRequired().HasDefaultValue(0);
             builder.Property(x => x.UnitsOnOrder).IsRequired().HasDefaultValue(0);
-            builder.Property(x => x.Discontinued).IsRequired().HasDefaultValue(true);
+            builder.Property(x => x.Discontinued).IsRequired();
         }
     }
 }

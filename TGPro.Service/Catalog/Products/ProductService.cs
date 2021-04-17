@@ -10,6 +10,7 @@ using TGPro.Data.EF;
 using TGPro.Data.Entities;
 using TGPro.Service.Common;
 using TGPro.Service.DTOs.Products;
+using TGPro.Service.DTOs.Products.ViewModel;
 
 namespace TGPro.Service.Catalog.Products
 {
@@ -71,39 +72,73 @@ namespace TGPro.Service.Catalog.Products
             return new ApiSuccessResponse<string>(ConstantStrings.deleteSuccessfully);
         }
 
-        public async Task<ApiResponse<Product>> GetById(int productId)
+        public async Task<ApiResponse<ProductDetailsViewModel>> GetAllProductDetails()
         {
-            var productFromDb = await _db.Products.FindAsync(productId);
-            if (productFromDb == null)
-                return new ApiErrorResponse<Product>(ConstantStrings.FindByIdError(productId));
-            var productVM = _mapper.Map<Product>(productFromDb);
-            productVM.Category = await _db.Categories.FindAsync(productFromDb.CategoryId);
-            productVM.Trademark = await _db.Trademarks.FindAsync(productFromDb.TrademarkId);
-            productVM.Vendor = await _db.Vendors.FindAsync(productFromDb.VendorId);
-            productVM.Demand = await _db.Demands.FindAsync(productFromDb.DemandId);
-            productVM.Condition = await _db.Conditions.FindAsync(productFromDb.ConditionId);
-            productVM.ProductImages = await _db.ProductImages.Where(x => x.ProductId == productFromDb.Id).ToListAsync();
-            return new ApiSuccessResponse<Product>(productVM);
+            var productDetailsVM = new ProductDetailsViewModel()
+            {
+                Categories = await _db.Categories.ToListAsync(),
+                Vendors = await _db.Vendors.ToListAsync(),
+                Trademarks = await _db.Trademarks.ToListAsync(),
+                Demands = await _db.Demands.ToListAsync(),
+                Conditions = await _db.Conditions.ToListAsync()
+            };
+            return new ApiSuccessResponse<ProductDetailsViewModel>(productDetailsVM);
         }
 
-        public async Task<ApiResponse<IEnumerable<Product>>> GetListProduct()
+        public async Task<ApiResponse<ProductViewModel>> GetById(int productId)
+        {
+            var productFromDb = await _db.Products.FindAsync(productId);
+
+            if (productFromDb == null)
+                return new ApiErrorResponse<ProductViewModel>(ConstantStrings.FindByIdError(productId));
+
+            var category = await _db.Categories.FindAsync(productFromDb.CategoryId);
+            var trademark = await _db.Trademarks.FindAsync(productFromDb.TrademarkId);
+            var vendor = await _db.Vendors.FindAsync(productFromDb.VendorId);
+            var demand = await _db.Demands.FindAsync(productFromDb.DemandId);
+            var condition = await _db.Conditions.FindAsync(productFromDb.ConditionId);
+            var productImages = await _db.ProductImages.Where(x => x.ProductId == productFromDb.Id).ToListAsync();
+
+            var productVM = _mapper.Map<ProductViewModel>(productFromDb);
+            productVM.Category = _mapper.Map<CategoryViewModel>(category);
+            productVM.Trademark = _mapper.Map<TrademarkViewModel>(trademark);
+            productVM.Vendor = _mapper.Map<VendorViewModel>(vendor);
+            productVM.Demand = _mapper.Map<DemandViewModel>(demand);
+            productVM.Condition = _mapper.Map<ConditionViewModel>(condition);
+            productVM.ProductImages = _mapper.Map<IEnumerable<ProductImageViewModel>>(productImages);
+
+            return new ApiSuccessResponse<ProductViewModel>(productVM);
+        }
+
+        public async Task<ApiResponse<IEnumerable<ProductViewModel>>> GetListProduct()
         {
             List<Product> products = await _db.Products.OrderBy(x => x.Name).ToListAsync();
+
             if (products.Count == 0)
-                return new ApiErrorResponse<IEnumerable<Product>>(ConstantStrings.getAllError);
-            var lstProductVM = new List<Product>();
+                return new ApiErrorResponse<IEnumerable<ProductViewModel>>(ConstantStrings.getAllError);
+
+            var lstProductVM = new List<ProductViewModel>();
+
             foreach (var product in products)
             {
-                var productVM = _mapper.Map<Product>(product);
-                productVM.Category = await _db.Categories.FindAsync(product.CategoryId);
-                productVM.Trademark = await _db.Trademarks.FindAsync(product.TrademarkId);
-                productVM.Vendor = await _db.Vendors.FindAsync(product.VendorId);
-                productVM.Demand = await _db.Demands.FindAsync(product.DemandId);
-                productVM.Condition = await _db.Conditions.FindAsync(product.ConditionId);
-                productVM.ProductImages = await _db.ProductImages.Where(x => x.ProductId == product.Id).ToListAsync();
+                var category = await _db.Categories.FindAsync(product.CategoryId);
+                var trademark = await _db.Trademarks.FindAsync(product.TrademarkId);
+                var vendor = await _db.Vendors.FindAsync(product.VendorId);
+                var demand = await _db.Demands.FindAsync(product.DemandId);
+                var condition = await _db.Conditions.FindAsync(product.ConditionId);
+                var productImages = await _db.ProductImages.Where(x => x.ProductId == product.Id).ToListAsync();
+
+                var productVM = _mapper.Map<ProductViewModel>(product);
+                productVM.Category = _mapper.Map<CategoryViewModel>(category);
+                productVM.Trademark = _mapper.Map<TrademarkViewModel>(trademark);
+                productVM.Vendor = _mapper.Map<VendorViewModel>(vendor);
+                productVM.Demand = _mapper.Map<DemandViewModel>(demand);
+                productVM.Condition = _mapper.Map<ConditionViewModel>(condition);
+                productVM.ProductImages = _mapper.Map<IEnumerable<ProductImageViewModel>>(productImages);
                 lstProductVM.Add(productVM);
             }
-            return new ApiSuccessResponse<IEnumerable<Product>>(lstProductVM);
+
+            return new ApiSuccessResponse<IEnumerable<ProductViewModel>>(lstProductVM);
         }
 
         public async Task<ApiResponse<string>> Update(int productId, ProductRequest request)

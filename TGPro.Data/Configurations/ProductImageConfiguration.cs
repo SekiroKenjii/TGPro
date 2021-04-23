@@ -22,7 +22,6 @@ namespace TGPro.Data.Configurations
             builder.Property(x => x.ImageUrl).IsRequired();
             builder.Property(x => x.PublicId).IsRequired();
             builder.Property(x => x.Caption).IsRequired();
-            builder.Property(x => x.IsDefault).IsRequired().HasDefaultValue(false);
         }
     }
 }

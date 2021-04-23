@@ -128,7 +128,6 @@ namespace TGPro.Service.Catalog.Authentication
         {
             var user = _mapper.Map<AppUser>(request);
             user.LockoutEnd = DateTime.Now;
-            user.LockoutEnabled = false;
             if (request.ProfilePicture != null)
             {
                 var result = await UploadImage(request.ProfilePicture, null);
@@ -168,7 +167,10 @@ namespace TGPro.Service.Catalog.Authentication
                 }
             }
             else
+            {
+                await DeleteImage(user.PublicId);
                 return new ApiErrorResponse<string>(ConstantStrings.addUnuccessfully);
+            }
             return new ApiSuccessResponse<string>(ConstantStrings.addSuccessfully);
         }
 

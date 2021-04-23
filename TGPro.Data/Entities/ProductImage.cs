@@ -14,7 +14,6 @@ namespace TGPro.Data.Entities
         public string ImageUrl { get; set; }
         public string PublicId { get; set; }
         public string Caption { get; set; }
-        public bool IsDefault { get; set; }
         public int SortOrder { get; set; }
     }
 }

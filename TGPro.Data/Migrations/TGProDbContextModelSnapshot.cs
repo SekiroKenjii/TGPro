@@ -149,7 +149,7 @@ namespace TGPro.Data.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "c02ef166-de16-40c9-9ae6-d275f422e547",
+                            ConcurrencyStamp = "46f91136-52fb-42ca-af81-d9ba9b819d4d",
                             Description = "Application administrator role",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
@@ -252,7 +252,7 @@ namespace TGPro.Data.Migrations
                             AccessFailedCount = 0,
                             Address = "KTX Khu B, Đại Học Quốc Gia TPHCM",
                             City = "Thành phố Hồ Chí Minh",
-                            ConcurrencyStamp = "bf836832-d369-4152-93e6-5d13a93f4465",
+                            ConcurrencyStamp = "c80dc05b-dd3e-4978-a978-6cf609bb8afd",
                             Country = "Việt Nam",
                             Email = "trungthuongvo109@gmail.com",
                             EmailConfirmed = true,
@@ -262,7 +262,7 @@ namespace TGPro.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "trungthuongvo109@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJOvWaR/TtlpGv8AAknyFQmOg47lUGmVmjrKmsSS7lNIYMVJggg1bwG2ND5plGI/7g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMnNdEoPNAanPNfJ/IWWyHoU7qx6bwCEZkhOVGA5vkpT+igyJ3poB0stPoeiihiyzQ==",
                             PhoneNumber = "0375274267",
                             PhoneNumberConfirmed = true,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -435,11 +435,6 @@ namespace TGPro.Data.Migrations
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDefault")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using TGPro.Data.Entities;
 using TGPro.Service.Common;
 using TGPro.Service.DTOs.Products;
 using TGPro.Service.DTOs.Products.ViewModel;
@@ -8,7 +9,7 @@ namespace TGPro.Service.Catalog.Products
 {
     public interface IProductService
     {
-        Task<ApiResponse<IEnumerable<ProductViewModel>>> GetListProduct();
+        Task<ApiResponse<IEnumerable<Product>>> GetListProduct();
         Task<ApiResponse<ProductDetailsViewModel>> GetAllProductDetails();
         Task<ApiResponse<string>> Create(ProductRequest request);
 
@@ -16,6 +17,6 @@ namespace TGPro.Service.Catalog.Products
 
         Task<ApiResponse<string>> Delete(int productId);
 
-        Task<ApiResponse<ProductViewModel>> GetById(int productId);
+        Task<ApiResponse<Product>> GetById(int productId);
     }
 }

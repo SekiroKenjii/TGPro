@@ -50,12 +50,12 @@ namespace TGPro.Service.Catalog.ProductImages
                     ImageUrl = uploadResult.SecureUrl.ToString(),
                     PublicId = uploadResult.PublicId,
                     Caption = SystemFunctions.ProductImageCaption(productFromDb.Name, productImageFromDb.FirstOrDefault().SortOrder + i + 1),
-                    ProductId = _db.Products.OrderByDescending(x => x.Id).FirstOrDefault().Id,
-                    IsDefault = false,
+                    ProductId = productFromDb.Id,
                     SortOrder = productImageFromDb.FirstOrDefault().SortOrder + i + 1
                 };
                 _db.ProductImages.Add(productImage);
             }
+            _db.ProductImages.Remove(productImageFromDb.Where(x=>x.PublicId == ConstantStrings.blankProductImagePublicId).FirstOrDefault());
             await _db.SaveChangesAsync();
             return new ApiSuccessResponse<string>(ConstantStrings.addSuccessfully);
         }

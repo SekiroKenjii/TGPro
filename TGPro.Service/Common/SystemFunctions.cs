@@ -5,40 +5,34 @@ namespace TGPro.Service.Common
 {
     public class SystemFunctions
     {
-        public static string DefaultProductImageCaption(string name)
+        public static string BlankProductImageCaption(string name)
         {
-            string caption = LowerStringHasUnderscore(name) + "_Default_Image";
-            return caption;
+            return LowerStringHasUnderscore(name) + "_blank_image";
         }
 
         public static string ProductImageCaption(string name, int identity)
         {
-            string caption = LowerStringHasUnderscore(name) + "_Image_" + identity;
-            return caption;
+            return LowerStringHasUnderscore(name) + "_image_" + identity;
         }
 
         public static string LowerString(string inputString)
         {
-            string rString = inputString.ToLower();
-            return rString;
+            return inputString.ToLower();
         }
 
         public static string LowerStringHasUnderscore(string inputString)
         {
-            string rString = inputString.ToLower().Replace(" ", "_");
-            return rString;
+            return inputString.ToLower().Replace(" ", "_");
         }
 
         public static string LowerStringHasDash(string inputString)
         {
-            string rString = inputString.ToLower().Replace(" ", "-");
-            return rString;
+            return inputString.ToLower().Replace(" ", "-");
         }
 
         public static string GenerateFileName(string inputFileName, string inputOriginalFileName)
         {
-            string rString = $"{inputFileName}-{Guid.NewGuid()}{Path.GetExtension(inputOriginalFileName)}";
-            return rString;
+            return $"{inputFileName}-{Guid.NewGuid()}{Path.GetExtension(inputOriginalFileName)}";
         }
     }
 }

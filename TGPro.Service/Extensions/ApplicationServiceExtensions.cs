@@ -39,6 +39,7 @@ namespace TGPro.Service.Extensions
 
             services.AddAutoMapper(typeof(AutoMapperProducts).Assembly);
             services.AddAutoMapper(typeof(AutoMapperVendors).Assembly);
+            services.AddAutoMapper(typeof(AutoMapperUsers).Assembly);
 
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore

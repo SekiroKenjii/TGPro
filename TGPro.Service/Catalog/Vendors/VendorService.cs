@@ -61,8 +61,7 @@ namespace TGPro.Service.Catalog.Vendors
                 return new ApiErrorResponse<string>(ConstantStrings.FindByIdError(vendorId));
             if (string.IsNullOrEmpty(request.Name))
                 return new ApiErrorResponse<string>(ConstantStrings.emptyNameFieldError);
-            vendorFromDb = _mapper.Map<Vendor>(request);
-            _db.Vendors.Update(vendorFromDb);
+            _mapper.Map<VendorRequest, Vendor>(request, vendorFromDb);
             await _db.SaveChangesAsync();
             return new ApiSuccessResponse<string>(ConstantStrings.editSuccessfully);
         }

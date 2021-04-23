@@ -17,6 +17,9 @@
         public const string defaultMaleImage = "default_male_image.jpg";
         public const string defaultFemaleImage = "default_female_image.jpg";
 
+        public const string blankProductImageUrl = "https://res.cloudinary.com/dglgzh0aj/image/upload/v1619054413/upload/img/product/blank/default_product_image_zjdfbn.jpg";
+        public const string blankProductImagePublicId = "upload/img/product/blank/default_product_image_zjdfbn";
+
         public const string CL_TRADEMARK_IMAGE_FOLDER = "upload/img/trademark/";
         public const string CL_USER_IMAGE_FOLDER = "upload/img/user/";
         public const string CL_PRODUCT_IMAGE_FOLDER = "upload/img/product/";
